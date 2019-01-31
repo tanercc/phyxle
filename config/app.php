@@ -54,6 +54,14 @@ $settings = [
                 'name' => strtolower(getenv('APP_NAME')) . '_session',
                 'autoRefresh' => false,
                 'handler' => null
+            ],
+            'csrf' => [
+                'prefix' => strtolower(getenv('APP_NAME')) . '_csrf',
+                'storage' => null,
+                'failureCallable' => null,
+                'storageLimit' => 200,
+                'strength' => 64,
+                'persistentTokenMode' => false
             ]
         ]
     ]

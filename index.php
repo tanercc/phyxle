@@ -14,6 +14,7 @@ require_once __DIR__ . "/config/app.php";
 $container = new Container($settings);
 
 require_once __DIR__ . "/config/middleware/session.php";
+require_once __DIR__ . "/config/middleware/csrf.php";
 require_once __DIR__ . "/config/view.php";
 require_once __DIR__ . "/config/filesystem.php";
 require_once __DIR__ . "/config/database.php";
