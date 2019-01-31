@@ -14,6 +14,7 @@ class Base
     {
         $this->container = $container;
         $this->data = [];
+        $container->get('database');
     }
 
     protected function view(Response $response, string $template)
