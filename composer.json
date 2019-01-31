@@ -1,0 +1,14 @@
+{
+    "name": "enindu/phyxle",
+    "description": "Rapid web development environment, based on Slim framework",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Enindu Alahapperuma",
+            "email": "enindu@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
