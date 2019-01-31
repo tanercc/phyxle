@@ -2,13 +2,14 @@
 
 namespace App\Controller;
 
+use App\Controller\Base;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Pages
+class Pages extends Base
 {
     public function home(Request $request, Response $response, array $data)
     {
-        $response->write(getenv('APP_NAME'));
+        return $this->view($response, 'public/home.twig');
     }
 }

@@ -12,6 +12,10 @@ $dotenv->load(__DIR__ . '/.env');
 require_once __DIR__ . "/config/app.php";
 
 $container = new Container($settings);
+
+require_once __DIR__ . "/config/view.php";
+require_once __DIR__ . "/config/filesystem.php";
+
 $app = new App($container);
 
 require_once __DIR__ . "/app/routes.php";

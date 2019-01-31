@@ -12,7 +12,9 @@
     "minimum-stability": "stable",
     "require": {
         "slim/slim": "^3.12",
-        "symfony/dotenv": "^4.2"
+        "symfony/dotenv": "^4.2",
+        "symfony/filesystem": "^4.2",
+        "twig/twig": "^2.6"
     },
     "autoload": {
         "psr-4": {
