@@ -16,6 +16,7 @@ $container = new Container($settings);
 require_once __DIR__ . "/config/view.php";
 require_once __DIR__ . "/config/filesystem.php";
 require_once __DIR__ . "/config/database.php";
+require_once __DIR__ . "/config/mail.php";
 
 $app = new App($container);
 

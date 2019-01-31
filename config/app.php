@@ -37,6 +37,12 @@ $settings = [
             'charset' => getenv('DB_CHARSET'),
             'collation' => getenv('DB_COLLATION'),
             'prefix' => getenv('DB_PREFIX')
+        ],
+        'mail' => [
+            'host' => getenv('MAIL_HOST'),
+            'port' => getenv('MAIL_PORT'),
+            'username' => getenv('MAIL_USERNAME'),
+            'password' => getenv('MAIL_PASSWORD')
         ]
     ]
 ];
