@@ -13,6 +13,7 @@ require_once __DIR__ . "/config/app.php";
 
 $container = new Container($settings);
 
+require_once __DIR__ . "/config/middleware/session.php";
 require_once __DIR__ . "/config/view.php";
 require_once __DIR__ . "/config/filesystem.php";
 require_once __DIR__ . "/config/database.php";
@@ -21,6 +22,7 @@ require_once __DIR__ . "/config/errors.php";
 
 $app = new App($container);
 
+require_once __DIR__ . "/app/middleware.php";
 require_once __DIR__ . "/app/routes.php";
 
 $app->run();

@@ -43,6 +43,18 @@ $settings = [
             'port' => getenv('MAIL_PORT'),
             'username' => getenv('MAIL_USERNAME'),
             'password' => getenv('MAIL_PASSWORD')
+        ],
+        'middleware' => [
+            'session' => [
+                'lifetime' => 0,
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false,
+                'name' => strtolower(getenv('APP_NAME')) . '_session',
+                'autoRefresh' => false,
+                'handler' => null
+            ]
         ]
     ]
 ];
