@@ -9,6 +9,37 @@ use Slim\Http\Response;
 
 class Account extends Base
 {
+    public function login(Request $request, Response $response, array $data)
+    {
+        if(!$this->authCheck) {
+            $validation = $this->validate($request, [
+                'email' => 'required|email|max:191',
+                'password' => 'required|min:6|max:32'
+            ]);
+            if($validation === null) {
+                $email = htmlspecialchars(trim($request->getParam('email')));
+                $password = htmlspecialchars(trim($request->getParam('password')));
+                $check = User::where('email', $email)->value('password');
+                if(password_verify($password, $check)) {
+                    setcookie(strtolower(getenv('APP_NAME')) . '_auth_token', User::where('email', $email)->value('unique_id'), strtotime('1 day'), '/');
+                    User::where('email', $email)->update([
+                        'logged_count' => User::where('email', $email)->value('logged_count') + 1,
+                        'last_logged_at' => $this->time::now()
+                    ]);
+                    return $response->withRedirect('/admin', 301);
+                } else {
+                    $this->data['error'] = "Email or password is invalid";
+                    return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+                }
+            } else {
+                $this->data['error'] = reset($validation);
+                return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            }
+        } else {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+    }
+
     public function register(Request $request, Response $response, array $data)
     {
         if(!$this->authCheck) {

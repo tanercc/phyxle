@@ -9,7 +9,15 @@
         </p>
         <ul class="menu-list">
             <li>
-                <a class="{{ id == 'register' ? 'is-active' }}" href="{{ 'admin/account/register' }}">
+                <a class="{{ id == 'login' ? 'is-active' }}" href="{{ 'admin/account/login'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </span>
+                    <span>Login</span>
+                </a>
+            </li>
+            <li>
+                <a class="{{ id == 'register' ? 'is-active' }}" href="{{ 'admin/account/register'|link }}">
                     <span class="icon">
                         <i class="fas fa-user-plus"></i>
                     </span>

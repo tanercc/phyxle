@@ -8,6 +8,15 @@ use Slim\Http\Response;
 
 class AdminPages extends Base
 {
+    public function login(Request $request, Response $response, array $data)
+    {
+        if(!$this->authCheck) {
+            return $this->view($response, 'admin/login.twig');
+        } else {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+    }
+
     public function register(Request $request, Response $response, array $data)
     {
         if(!$this->authCheck) {
