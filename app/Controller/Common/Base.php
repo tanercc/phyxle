@@ -9,11 +9,13 @@ class Base
 {
     protected $container;
     protected $data;
+    protected $authCheck;
 
     public function __construct(Container $container)
     {
         $this->container = $container;
         $this->data = [];
+        $this->authCheck = (isset($_SESSION[strtolower($container->get('settings')['app']['name']) . '_auth']) ? true : false);
         $container->get('database');
     }
 
@@ -34,5 +36,12 @@ class Base
         $message->setBody($template, $type);
         $mail = $this->container->get('mail');
         return $mail->send($message);
+    }
+
+    protected function authGet(string $key)
+    {
+        if($this->authCheck) {
+            return $_SESSION[strtolower($container->get('settings')['app']['name'])][$key];
+        }
     }
 }

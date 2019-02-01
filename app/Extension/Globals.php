@@ -24,6 +24,13 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
                 'keywords' => $this->container->get('settings')['app']['keywords'],
                 'author' => $this->container->get('settings')['app']['author']
             ],
+            'auth' => [
+                'check' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth_token'])) ? true : false,
+                'username' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth_token'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth_token']['username'] : null,
+                'email' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth_token'])) ? $_SESSION[strtolower(getenv('APP_NAME')) .'_auth']['email'] : null,
+                'lastLogin' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth_token'])) ? $_SESSION[strtolower(getenv('APP_NAME')) .'_auth']['lastLogin'] : null,
+                'loginCount' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth_token'])) ? $_SESSION[strtolower(getenv('APP_NAME')) .'_auth']['loginCount'] : null
+            ],
             'csrf' => [
                 'name' => [
                     'key' => $this->container->get('csrf')->getTokenNameKey(),
