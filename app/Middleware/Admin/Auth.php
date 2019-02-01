@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware\Auth;
+namespace App\Middleware\Admin;
 
 use Slim\Container;
 use Slim\Http\Request;

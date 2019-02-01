@@ -15,6 +15,7 @@ $settings = [
             'keywords' => getenv('APP_KEYWORDS'),
             'author' => getenv('APP_AUTHOR'),
             'url' => getenv('APP_URL'),
+            'key' => getenv('APP_KEY'),
             'errors' => (getenv('APP_ERRORS') == 'true' ? true : false)
         ],
         'view' => [
@@ -43,6 +44,13 @@ $settings = [
             'port' => getenv('MAIL_PORT'),
             'username' => getenv('MAIL_USERNAME'),
             'password' => getenv('MAIL_PASSWORD')
+        ],
+        'validator' => [
+            'required' => 'You cannot leave any empty field',
+            'min' => 'There is a minimum character limit',
+            'max' => 'There is a maximum character limit',
+            'email' => 'Email is not valid',
+            'same' => 'Password fields are do not match'
         ],
         'middleware' => [
             'session' => [

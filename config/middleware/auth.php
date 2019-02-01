@@ -1,6 +1,6 @@
 <?php
 
-use App\Middleware\Auth\Auth;
+use App\Middleware\Admin\Auth;
 use Slim\Container;
 
 $container['auth'] = function(Container $container) {

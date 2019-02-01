@@ -3,6 +3,7 @@
 namespace App\Controller\Common;
 
 use Slim\Container;
+use Slim\Http\Request;
 use Slim\Http\Response;
 
 class Base
@@ -10,12 +11,14 @@ class Base
     protected $container;
     protected $data;
     protected $authCheck;
+    protected $time;
 
     public function __construct(Container $container)
     {
         $this->container = $container;
         $this->data = [];
         $this->authCheck = (isset($_SESSION[strtolower($container->get('settings')['app']['name']) . '_auth']) ? true : false);
+        $this->time = $container->get('time');
         $container->get('database');
     }
 
@@ -42,6 +45,15 @@ class Base
     {
         if($this->authCheck) {
             return $_SESSION[strtolower($container->get('settings')['app']['name'])][$key];
+        }
+    }
+
+    protected function validate(Request $request, array $input)
+    {
+        $validator = $this->container->get('validator');
+        $validation = $validator->validate($request->getParams(), $input);
+        if($validation->fails()) {
+            return $validation->errors()->firstOfAll();
         }
     }
 }

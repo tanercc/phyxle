@@ -3,3 +3,8 @@ body {
     font-family: 'Rubik', sans-serif;
     font-size: 14px;
 }
+
+input,
+button {
+    font-family: 'Rubik', sans-serif;
+}

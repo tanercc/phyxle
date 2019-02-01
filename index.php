@@ -21,6 +21,8 @@ require_once __DIR__ . "/config/filesystem.php";
 require_once __DIR__ . "/config/database.php";
 require_once __DIR__ . "/config/mail.php";
 require_once __DIR__ . "/config/errors.php";
+require_once __DIR__ . "/config/validator.php";
+require_once __DIR__ . "/config/time.php";
 
 $app = new App($container);
 

@@ -40,6 +40,11 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
                     'key' => $this->container->get('csrf')->getTokenValueKey(),
                     'value' => $this->container->get('csrf')->getTokenValue()
                 ]
+            ],
+            'system' => [
+                'php' => [
+                    'version' => phpversion()
+                ]
             ]
         ];
     }

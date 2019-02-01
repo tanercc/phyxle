@@ -1,0 +1,34 @@
+<div class="menu">
+    <h1 class="title">{{ app.name }}</h1>
+    <hr />
+    {% if auth.check %}
+
+    {% else %}
+        <p class="menu-label">
+            Account
+        </p>
+        <ul class="menu-list">
+            <li>
+                <a class="{{ id == 'register' ? 'is-active' }}" href="{{ 'admin/account/register' }}">
+                    <span class="icon">
+                        <i class="fas fa-user-plus"></i>
+                    </span>
+                    <span>Register</span>
+                </a>
+            </li>
+        </ul>
+    {% endif %}
+    <p class="menu-label">
+        Website
+    </p>
+    <ul class="menu-list">
+        <li>
+            <a href="{{ ''|link }}" target="_blank" rel="noopener">
+                <span class="icon">
+                    <i class="fas fa-home"></i>
+                </span>
+                <span>Home</span>
+            </a>
+        </li>
+    </ul>
+</div>

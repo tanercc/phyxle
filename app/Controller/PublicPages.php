@@ -10,6 +10,6 @@ class PublicPages extends Base
 {
     public function home(Request $request, Response $response, array $data)
     {
-        return $this->view($response, 'public/home.twig');
+        return $this->view($response, 'home.twig');
     }
 }
