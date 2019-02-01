@@ -2,7 +2,19 @@
     <h1 class="title">{{ app.name }}</h1>
     <hr />
     {% if auth.check %}
-
+    <p class="menu-label">
+        Account
+    </p>
+    <ul class="menu-list">
+        <li>
+            <a class="{{ id == 'logout' ? 'is-active' }}" href="{{ 'admin/account/logout'|link }}">
+                <span class="icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                </span>
+                <span>Logout</span>
+            </a>
+        </li>
+    </ul>
     {% else %}
         <p class="menu-label">
             Account

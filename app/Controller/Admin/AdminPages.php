@@ -25,4 +25,13 @@ class AdminPages extends Base
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
     }
+
+    public function logout(Request $request, Response $response, array $data)
+    {
+        if($this->authCheck) {
+            return $this->view($response, 'admin/logout.twig');
+        } else {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+    }
 }

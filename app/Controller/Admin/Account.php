@@ -21,7 +21,7 @@ class Account extends Base
                 $password = htmlspecialchars(trim($request->getParam('password')));
                 $check = User::where('email', $email)->value('password');
                 if(password_verify($password, $check)) {
-                    setcookie(strtolower(getenv('APP_NAME')) . '_auth_token', User::where('email', $email)->value('unique_id'), strtotime('1 day'), '/');
+                    setcookie(strtolower($this->container->get('settings')['app']['name']) . '_auth_token', User::where('email', $email)->value('unique_id'), strtotime('1 day'), '/');
                     User::where('email', $email)->update([
                         'logged_count' => User::where('email', $email)->value('logged_count') + 1,
                         'last_logged_at' => $this->time::now()
@@ -84,6 +84,17 @@ class Account extends Base
                 $this->data['error'] = reset($validation);
                 return $this->view($response->withStatus(400), 'common/templates/validation.twig');
             }
+        } else {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+    }
+
+    public function logout(Request $request, Response $response, array $data)
+    {
+        if($this->authCheck) {
+            setcookie(strtolower($this->container->get('settings')['app']['name']) . '_auth_token', 'logout', time() - 1, '/');
+            unset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth']);
+            return $response->withRedirect('/', 301);
         } else {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }

@@ -1,0 +1,47 @@
+{% extends 'admin/layouts/base.twig' %}
+
+{% set title = 'Logout From Your Account' %}
+{% set id = 'logout' %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-6">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">{{ app.name }}</h1>
+                        <h2 class="subtitle">{{ title }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <form action="{{ 'admin/account/logout'|link }}" method="post">
+                        <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                        <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                        <div class="field is-grouped is-grouped-centered">
+                            <div class="control">
+                                <button class="button is-success">
+                                    <span class="icon">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </span>
+                                    <span>Logout</span>
+                                </button>
+                            </div>
+                            <div class="control">
+                                <a class="button is-danger" href="{{ 'admin'|link }}">
+                                    <span class="icon">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                    <span>Cancel</span>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
