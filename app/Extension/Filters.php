@@ -29,20 +29,22 @@ class Filters extends Twig_Extension
     {
         $filesystem = $this->container->get('filesystem');
         $url = $this->container->get('settings')['app']['url'];
-        if(!$filesystem->exists(__DIR__ . '/../../resources/assets/' . $file)) {
+        if($filesystem->exists(__DIR__ . '/../../resources/assets/' . $file)) {
+            return $url . "/resources/assets/" . $file;
+        } else {
             throw new Twig_Error_Runtime('Unable to find "' . $file . '".');
         }
-        return $url . "/resources/assets/" . $file;
     }
 
     public function media(string $file)
     {
         $filesystem = $this->container->get('filesystem');
         $url = $this->container->get('settings')['app']['url'];
-        if(!$filesystem->exists(__DIR__ . '/../../resources/media/' . $file)) {
+        if($filesystem->exists(__DIR__ . '/../../resources/media/' . $file)) {
+            return $url . "/resources/media/" . $file;
+        } else {
             throw new Twig_Error_Runtime('Unable to find "' . $file . '".');
         }
-        return $url . "/resources/media/" . $file;
     }
 
     public function link(string $path)
