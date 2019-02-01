@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
-use App\Controller\Base;
+use App\Controller\Common\Base;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Pages extends Base
+class PublicPages extends Base
 {
     public function home(Request $request, Response $response, array $data)
     {
