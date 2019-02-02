@@ -3,6 +3,19 @@
     <hr />
     {% if auth.check %}
     <p class="menu-label">
+        Dashboard
+    </p>
+    <ul class="menu-list">
+        <li>
+            <a class="{{ id == 'home' ? 'is-active' }}" href="{{ 'admin'|link }}">
+                <span class="icon">
+                    <i class="fas fa-home"></i>
+                </span>
+                <span>Home</span>
+            </a>
+        </li>
+    </ul>
+    <p class="menu-label">
         Account
     </p>
     <ul class="menu-list">

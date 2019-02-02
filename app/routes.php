@@ -5,6 +5,7 @@ use App\Controller\Admin\AdminPages;
 use App\Controller\PublicPages;
 
 $app->get('/', PublicPages::class . ':home');
+$app->get('/admin', AdminPages::class . ':home');
 $app->get('/admin/account/login', AdminPages::class . ':login');
 $app->post('/admin/account/login', Account::class . ':login');
 $app->get('/admin/account/register', AdminPages::class . ':register');

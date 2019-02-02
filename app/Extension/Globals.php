@@ -28,8 +28,10 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
                 'check' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? true : false,
                 'username' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth']['username'] : null,
                 'email' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) .'_auth']['email'] : null,
-                'lastLogin' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) .'_auth']['lastLogin'] : null,
-                'loginCount' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) .'_auth']['loginCount'] : null
+                'login' => [
+                    'last' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) .'_auth']['lastLogin'] : null,
+                    'count' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) .'_auth']['loginCount'] : null
+                ]
             ],
             'csrf' => [
                 'name' => [
@@ -39,11 +41,6 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
                 'token' => [
                     'key' => $this->container->get('csrf')->getTokenValueKey(),
                     'value' => $this->container->get('csrf')->getTokenValue()
-                ]
-            ],
-            'system' => [
-                'php' => [
-                    'version' => phpversion()
                 ]
             ]
         ];

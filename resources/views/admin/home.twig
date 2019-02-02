@@ -1,0 +1,170 @@
+{% extends 'admin/layouts/base.twig' %}
+
+{% set title = 'Admin Dashboard' %}
+{% set id = 'home' %}
+
+{% block content %}
+<div class="columns">
+    <div class="column">
+        <div class="box">
+            <img src="{{ 'images/app.png'|asset }}" alt="Screenshot" />
+        </div>
+    </div>
+</div>
+<div class="columns">
+    <div class="column">
+        <div class="box">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-2">
+                    <div class="icon is-size-3">
+                        <i class="fas fa-home"></i>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <p class="heading">
+                        App
+                    </p>
+                    <p class="title is-6">
+                        {{ app.name }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-2">
+                    <div class="icon is-size-3">
+                        <i class="fas fa-link"></i>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <p class="heading">
+                        App URL
+                    </p>
+                    <p class="title is-6">
+                        {{ appUrl }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-2">
+                    <div class="icon is-size-3">
+                        <i class="fas fa-key"></i>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <p class="heading">
+                        App Key
+                    </p>
+                    <p class="title is-6">
+                        {{ appKey }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-2">
+                    <div class="icon is-size-3">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <p class="heading">
+                        PHP Version
+                    </p>
+                    <p class="title is-6">
+                        {{ phpVersion }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="columns">
+    <div class="column">
+        <div class="box">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-2">
+                    <div class="icon is-size-3">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <p class="heading">
+                        {{ auth.username }}
+                    </p>
+                    <p class="title is-6">
+                        {{ auth.email }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-2">
+                    <div class="icon is-size-3">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <p class="heading">
+                        Last Login
+                    </p>
+                    <p class="title is-6">
+                        {{ auth.login.last }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-2">
+                    <div class="icon is-size-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <p class="heading">
+                        Users
+                    </p>
+                    <p class="title is-6">
+                        {{ usersCount }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-2">
+                    <div class="icon is-size-3">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <p class="heading">
+                        Login Count
+                    </p>
+                    <p class="title is-6">
+                        {{ auth.login.count }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

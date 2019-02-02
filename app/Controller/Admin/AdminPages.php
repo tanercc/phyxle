@@ -3,11 +3,27 @@
 namespace App\Controller\Admin;
 
 use App\Controller\Common\Base;
+use App\Model\Admin\User;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class AdminPages extends Base
 {
+    public function home(Request $request, Response $response, array $data)
+    {
+        if($this->authCheck) {
+            $this->data = [
+                'appUrl' => $this->container->get('settings')['app']['url'],
+                'appKey' => $this->container->get('settings')['app']['key'],
+                'phpVersion' => phpVersion(),
+                'usersCount' => count(User::all())
+            ];
+            return $this->view($response, 'admin/home.twig');
+        } else {
+            return $response->withRedirect('/admin/account/login', 301);
+        }
+    }
+
     public function login(Request $request, Response $response, array $data)
     {
         if(!$this->authCheck) {
