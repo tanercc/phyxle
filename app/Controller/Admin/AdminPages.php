@@ -24,6 +24,22 @@ class AdminPages extends Base
         }
     }
 
+    public function account(Request $request, Response $response, array $data)
+    {
+        if($this->authCheck) {
+            $this->data = [
+                'appUrl' => $this->container->get('settings')['app']['url'],
+                'appKey' => $this->container->get('settings')['app']['key'],
+                'phpVersion' => phpVersion(),
+                'usersCount' => count(User::all()),
+                'users' => User::all()
+            ];
+            return $this->view($response, 'admin/account.twig');
+        } else {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+    }
+
     public function login(Request $request, Response $response, array $data)
     {
         if(!$this->authCheck) {

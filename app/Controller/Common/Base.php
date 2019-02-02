@@ -44,7 +44,7 @@ class Base
     protected function authGet(string $key)
     {
         if($this->authCheck) {
-            return $_SESSION[strtolower($container->get('settings')['app']['name'])][$key];
+            return $_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'][$key];
         }
     }
 

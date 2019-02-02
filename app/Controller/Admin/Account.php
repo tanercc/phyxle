@@ -99,4 +99,76 @@ class Account extends Base
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
     }
+
+    public function updateDetails(Request $request, Response $response, array $data)
+    {
+        if($this->authCheck) {
+            $validation = $this->validate($request, [
+                'username' => 'required|max:16',
+                'email' => 'required|email|max:191',
+                'current-password' => 'required|min:6|max:32'
+            ]);
+            if($validation === null) {
+                $email = htmlspecialchars(trim($request->getParam('email')));
+                $check = User::where('email', $email)->get();
+                if(count($check) < 1) {
+                    $currentPassword = htmlspecialchars(trim($request->getParam('current-password')));
+                    $check = User::where('id', $this->authGet('id'))->value('password');
+                    if(password_verify($currentPassword, $check)) {
+                        $username = htmlspecialchars(trim($request->getParam('username')));
+                        User::where('id', $this->authGet('id'))->update([
+                            'username' => $username,
+                            'email' => $email
+                        ]);
+                        return $response->withRedirect('/admin/account', 301);
+                    } else {
+                        $this->data['error'] = "Current password is invalid";
+                        return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+                    }
+                } else {
+                    $this->data['error'] = "That email is already taken";
+                    return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+                }
+            } else {
+                $this->data['error'] = reset($validation);
+                return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            }
+        } else {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+    }
+
+    public function changePassword(Request $request, Response $response, array $data)
+    {
+        if($this->authCheck) {
+            $validation = $this->validate($request, [
+                'current-password' => 'required|min:6|max:32',
+                'new-password' => 'required|min:6|max:32',
+                'new-password-confirm' => 'required|min:6|max:32|same:new-password'
+            ]);
+            if($validation === null) {
+                $currentPassword = htmlspecialchars(trim($request->getParam('current-password')));
+                $check = User::where('id', $this->authGet('id'))->value('password');
+                if(password_verify($currentPassword, $check)) {
+                    $newPassword = htmlspecialchars(trim($request->getParam('new-password')));
+                    User::where('id', $this->authGet('id'))->update([
+                        'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
+                            'memory_cost' => 2048,
+                            'time_cost' => 4,
+                            'threads' => 2
+                        ])
+                    ]);
+                    return $response->withRedirect('/admin/account', 301);
+                } else {
+                    $this->data['error'] = "Current password is invalid";
+                    return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+                }
+            } else {
+                $this->data['error'] = reset($validation);
+                return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            }
+        } else {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+    }
 }

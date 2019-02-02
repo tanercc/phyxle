@@ -1,0 +1,282 @@
+{% extends 'admin/layouts/base.twig' %}
+
+{% set title = 'Account' %}
+{% set id = 'account' %}
+
+{% block content %}
+<div class="columns">
+    <div class="column is-4">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Account</h1>
+                        <h2 class="subtitle">Your Account Details</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <table class="table is-fullwidth is-hoverable">
+                        <tbody>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <span>Username</span>
+                                </th>
+                                <td>
+                                    {{ auth.username }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <span>Email</span>
+                                </th>
+                                <td>
+                                    {{ auth.email }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </span>
+                                    <span>Last Login</span>
+                                </th>
+                                <td>
+                                    {{ auth.login.last }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-file-signature"></i>
+                                    </span>
+                                    <span>Login Count</span>
+                                </th>
+                                <td>
+                                    {{ auth.login.count }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">{{ app.name }}</h1>
+                        <h2 class="subtitle">Your App Details</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <table class="table is-fullwidth is-hoverable">
+                        <tbody>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-home"></i>
+                                    </span>
+                                    <span>App Name</span>
+                                </th>
+                                <td>
+                                    {{ app.name }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-link"></i>
+                                    </span>
+                                    <span>App URL</span>
+                                </th>
+                                <td>
+                                    {{ appUrl }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-key"></i>
+                                    </span>
+                                    <span>App Key</span>
+                                </th>
+                                <td>
+                                    {{ appKey }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-cog"></i>
+                                    </span>
+                                    <span>PHP Version</span>
+                                </th>
+                                <td>
+                                    {{ phpVersion }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-users"></i>
+                                    </span>
+                                    <span>Backend Users</span>
+                                </th>
+                                <td>
+                                    {{ usersCount }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-4">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Users</h1>
+                        <h2 class="subtitle">Backend Users</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <table class="table is-fullwidth is-hoverable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <span>Username</span>
+                                </th>
+                                <th>
+                                    <span class="icon">
+                                        <i class="fas fa-clock"></i>
+                                    </span>
+                                    <span>Created At</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        {{ user.username }}
+                                    </td>
+                                    <td>
+                                        {{ user.created_at }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-4">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Details</h1>
+                        <h2 class="subtitle">Update Account Details</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <form action="{{ 'admin/account/update-details'|link }}" method="post">
+                        <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                        <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                        <div class="field">
+                            <lable class="label">Enter your new username</lable>
+                            <div class="control">
+                                <input class="input" name="username" type="text" placeholder="New Username" value="{{ auth.username }}" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <lable class="label">Enter your new email</lable>
+                            <div class="control">
+                                <input class="input" name="email" type="text" placeholder="New Email" value="{{ auth.email }}" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <lable class="label">Enter your current password</lable>
+                            <div class="control">
+                                <input class="input" name="current-password" type="password" placeholder="Current Password" required />
+                            </div>
+                        </div>
+                        <div class="field has-text-right">
+                            <button class="button is-success" type="submit">
+                                <span class="icon">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                                <span>Update</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Password</h1>
+                        <h2 class="subtitle">Change Account Password</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <form action="{{ 'admin/account/change-password'|link }}" method="post">
+                        <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                        <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                        <div class="field">
+                            <lable class="label">Enter your current password</lable>
+                            <div class="control">
+                                <input class="input" name="current-password" type="password" placeholder="Current Password" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <lable class="label">Enter your new password</lable>
+                            <div class="control">
+                                <input class="input" name="new-password" type="password" placeholder="New Password" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <lable class="label">Confirm your new password</lable>
+                            <div class="control">
+                                <input class="input" name="new-password-confirm" type="password" placeholder="Confirm New Password" required />
+                            </div>
+                        </div>
+                        <div class="field has-text-right">
+                            <button class="button is-success" type="submit">
+                                <span class="icon">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                                <span>Change</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

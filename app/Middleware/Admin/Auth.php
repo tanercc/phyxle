@@ -21,11 +21,13 @@ class Auth
         if($cookie !== null) {
             $token = $this->container->get('database')->table('users')->where('unique_id', $cookie)->value('unique_id');
             if($token !== null) {
+                $id = $this->container->get('database')->table('users')->where('unique_id', $cookie)->value('id');
                 $username = $this->container->get('database')->table('users')->where('unique_id', $cookie)->value('username');
                 $email = $this->container->get('database')->table('users')->where('unique_id', $cookie)->value('email');
                 $lastLogin = $this->container->get('database')->table('users')->where('unique_id', $cookie)->value('last_logged_at');
                 $loginCount = $this->container->get('database')->table('users')->where('unique_id', $cookie)->value('logged_count');
                 $_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'] = [
+                    'id' => $id,
                     'username' => $username,
                     'email' => $email,
                     'lastLogin' => $lastLogin,
