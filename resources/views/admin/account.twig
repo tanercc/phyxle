@@ -20,46 +20,46 @@
                     <table class="table is-fullwidth is-hoverable">
                         <tbody>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-user"></i>
                                     </span>
                                     <span>Username</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ auth.username }}
                                 </td>
                             </tr>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-envelope"></i>
                                     </span>
                                     <span>Email</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ auth.email }}
                                 </td>
                             </tr>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-sign-in-alt"></i>
                                     </span>
                                     <span>Last Login</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ auth.login.last }}
                                 </td>
                             </tr>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-file-signature"></i>
                                     </span>
                                     <span>Login Count</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ auth.login.count }}
                                 </td>
                             </tr>
@@ -82,57 +82,57 @@
                     <table class="table is-fullwidth is-hoverable">
                         <tbody>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-home"></i>
                                     </span>
                                     <span>App Name</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ app.name }}
                                 </td>
                             </tr>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-link"></i>
                                     </span>
                                     <span>App URL</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ appUrl }}
                                 </td>
                             </tr>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-key"></i>
                                     </span>
                                     <span>App Key</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ appKey }}
                                 </td>
                             </tr>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-cog"></i>
                                     </span>
                                     <span>PHP Version</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ phpVersion }}
                                 </td>
                             </tr>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-users"></i>
                                     </span>
                                     <span>Backend Users</span>
                                 </th>
-                                <td>
+                                <td class="has-text-right">
                                     {{ usersCount }}
                                 </td>
                             </tr>
@@ -157,13 +157,13 @@
                     <table class="table is-fullwidth is-hoverable">
                         <thead>
                             <tr>
-                                <th>
+                                <th class="has-text-left">
                                     <span class="icon">
                                         <i class="fas fa-user"></i>
                                     </span>
                                     <span>Username</span>
                                 </th>
-                                <th>
+                                <th class="has-text-right">
                                     <span class="icon">
                                         <i class="fas fa-clock"></i>
                                     </span>
@@ -174,10 +174,10 @@
                         <tbody>
                             {% for user in users %}
                                 <tr>
-                                    <td>
+                                    <td class="has-text-left">
                                         {{ user.username }}
                                     </td>
-                                    <td>
+                                    <td class="has-text-right">
                                         {{ user.created_at }}
                                     </td>
                                 </tr>
@@ -186,6 +186,65 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <div class="box">
+            {% if media|length > 0 %}
+                <div class="columns">
+                    <div class="column">
+                        <div class="has-text-centered">
+                            <h1 class="title">Media</h1>
+                            <h2 class="subtitle">Uploaded Media</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <table class="table is-fullwidth is-hoverable">
+                            <thead>
+                                <tr>
+                                    <th class="has-text-left">
+                                        <span class="icon">
+                                            <i class="fas fa-file-image"></i>
+                                        </span>
+                                        <span>Media</span>
+                                    </th>
+                                    <th class="has-text-right">
+                                        <span class="icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </span>
+                                        <span>Size</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medium in media %}
+                                    <tr>
+                                        <td class="has-text-left">
+                                            {{ medium.name }}
+                                        </td>
+                                        <td class="has-text-right">
+                                            {{ medium.size }} KB
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <div class="columns">
+                    <div class="column">
+                        <div class="has-text-centered">
+                            <h1 class="title">
+                                <span class="icon">
+                                    <i class="far fa-frown"></i>
+                                </span>
+                                <span class="has-padding-left-10">No Media Found</span>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
     <div class="column is-4">

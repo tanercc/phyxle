@@ -33,7 +33,8 @@ class AdminPages extends Base
                 'appKey' => $this->container->get('settings')['app']['key'],
                 'phpVersion' => phpVersion(),
                 'usersCount' => count(User::all()),
-                'users' => User::all()
+                'users' => User::all(),
+                'media' => Medium::all()
             ];
             return $this->view($response, 'admin/account.twig');
         } else {
