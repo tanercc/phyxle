@@ -14,6 +14,7 @@
         "bryanjhv/slim-session": "^3.6",
         "illuminate/database": "^5.7",
         "illuminate/events": "^5.7",
+        "intervention/image": "^2.4",
         "rakit/validation": "^1.1",
         "slim/csrf": "^0.8.3",
         "slim/slim": "^3.12",

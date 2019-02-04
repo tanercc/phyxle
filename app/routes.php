@@ -2,6 +2,7 @@
 
 use App\Controller\Admin\Account;
 use App\Controller\Admin\AdminPages;
+use App\Controller\Admin\Media;
 use App\Controller\PublicPages;
 
 $app->get('/', PublicPages::class . ':home');
@@ -15,3 +16,7 @@ $app->get('/admin/account/logout', AdminPages::class . ':logout');
 $app->post('/admin/account/logout', Account::class . ':logout');
 $app->post('/admin/account/update-details', Account::class . ':updateDetails');
 $app->post('/admin/account/change-password', Account::class . ':changePassword');
+$app->get('/admin/media', AdminPages::class . ':media');
+$app->post('/admin/media/upload', Media::class . ':upload');
+$app->post('/admin/media/rename', Media::class . ':rename');
+$app->post('/admin/media/delete', Media::class . ':delete');

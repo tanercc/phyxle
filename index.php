@@ -23,6 +23,7 @@ require_once __DIR__ . "/config/mail.php";
 require_once __DIR__ . "/config/errors.php";
 require_once __DIR__ . "/config/validator.php";
 require_once __DIR__ . "/config/time.php";
+require_once __DIR__ . "/config/image.php";
 
 $app = new App($container);
 

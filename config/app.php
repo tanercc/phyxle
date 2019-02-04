@@ -16,6 +16,7 @@ $settings = [
             'author' => getenv('APP_AUTHOR'),
             'url' => getenv('APP_URL'),
             'key' => getenv('APP_KEY'),
+            'media' => getenv('APP_MEDIA'),
             'errors' => (getenv('APP_ERRORS') == 'true' ? true : false)
         ],
         'view' => [
@@ -51,6 +52,9 @@ $settings = [
             'max' => 'There is a maximum character limit',
             'email' => 'Email is not valid',
             'same' => 'Password fields are do not match'
+        ],
+        'image' => [
+            'driver' => 'gd'
         ],
         'middleware' => [
             'session' => [

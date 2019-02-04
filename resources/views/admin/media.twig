@@ -1,0 +1,132 @@
+{% extends 'admin/layouts/base.twig' %}
+
+{% set title = 'Manage Your Media' %}
+{% set id = 'media' %}
+
+{% block content %}
+<div class="columns">
+    <div class="column is-4">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Upload</h1>
+                        <h2 class="subtitle">Upload Your Media</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <form action="{{ 'admin/media/upload'|link }}" method="post" enctype="multipart/form-data">
+                        <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                        <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                        <div class="field is-grouped is-grouped-centered">
+                            <div class="control">
+                                <div class="file is-danger">
+                                    <label class="file-label">
+                                        <input class="file-input" name="media[]" type="file" accept="image/*" multiple required />
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i class="fas fa-image"></i>
+                                            </span>
+                                            <span class="file-label">Choose Images</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="control">
+                                <button class="button is-success" type="submit">
+                                    <span class="icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span>Upload</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-8">
+        <div class="box">
+            <div class="columns is-multiline">
+                {% for medium in media %}
+                    <div class="column is-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-header-title">
+                                    <h1 class="title is-6">
+                                        <span class="icon">
+                                            <i class="fas fa-file-image"></i>
+                                        </span>
+                                        <span>{{ medium.name }}</span>
+                                    </h1>
+                                </div>
+                                <div class="card-header-icon">
+                                    <form action="{{ 'admin/media/delete'|link }}" method="post">
+                                        <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                                        <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                                        <input name="id" type="hidden" value="{{ medium.id }}" />
+                                        <button class="delete"></button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="card-image">
+                                <div class="image">
+                                    <img src="{{ medium.name|media }}" alt="{{ medium.name }}" />
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <form action="{{ 'admin/media/rename'|link }}" method="post">
+                                    <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                                    <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                                    <input name="id" type="hidden" value="{{ medium.id }}" />
+                                    <div class="field has-addons">
+                                        <div class="control">
+                                            <input class="input" name="name" type="text" value="{{ medium.name }}" placeholder="Name" required/>
+                                        </div>
+                                        <div class="control">
+                                            <button class="button is-success">
+                                                <span class="icon">
+                                                    <i class="fas fa-edit"></i>
+                                                </span>
+                                                <span>Rename</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer">
+                                <div class="card-footer-item">
+                                    <span class="icon">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                    </span>
+                                    <span>{{ medium.height }}x{{ medium.width }} px</span>
+                                </div>
+                                <div class="card-footer-item">
+                                    <span class="icon">
+                                        <i class="fas fa-file-alt"></i>
+                                    </span>
+                                    <span>{{ medium.size }} KB</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="column">
+                        <div class="has-text-centered">
+                            <h1 class="title">
+                                <span class="icon">
+                                    <i class="far fa-frown"></i>
+                                </span>
+                                <span class="has-padding-left-10">No Media Found</span>
+                            </h1>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

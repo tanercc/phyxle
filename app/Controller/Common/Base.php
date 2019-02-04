@@ -12,6 +12,7 @@ class Base
     protected $data;
     protected $authCheck;
     protected $time;
+    protected $filesystem;
 
     public function __construct(Container $container)
     {
@@ -19,6 +20,7 @@ class Base
         $this->data = [];
         $this->authCheck = (isset($_SESSION[strtolower($container->get('settings')['app']['name']) . '_auth']) ? true : false);
         $this->time = $container->get('time');
+        $this->filesystem = $container->get('filesystem');
         $container->get('database');
     }
 
@@ -41,11 +43,10 @@ class Base
         return $mail->send($message);
     }
 
-    protected function authGet(string $key)
+    protected function image(string $name)
     {
-        if($this->authCheck) {
-            return $_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'][$key];
-        }
+        $image = $this->container->get('image');
+        return $image->make($name);
     }
 
     protected function validate(Request $request, array $input)
@@ -54,6 +55,13 @@ class Base
         $validation = $validator->validate($request->getParams(), $input);
         if($validation->fails()) {
             return $validation->errors()->firstOfAll();
+        }
+    }
+
+    protected function authGet(string $key)
+    {
+        if($this->authCheck) {
+            return $_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'][$key];
         }
     }
 }

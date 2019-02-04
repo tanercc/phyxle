@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Controller\Common\Base;
+use App\Model\Admin\Medium;
 use App\Model\Admin\User;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -62,6 +63,16 @@ class AdminPages extends Base
     {
         if($this->authCheck) {
             return $this->view($response, 'admin/logout.twig');
+        } else {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+    }
+
+    public function media(Request $request, Response $response, array $data)
+    {
+        if($this->authCheck) {
+            $this->data['media'] = Medium::all();
+            return $this->view($response, 'admin/media.twig');
         } else {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
