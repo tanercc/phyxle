@@ -36,11 +36,11 @@ class Auth
                 return $next($request, $response);
             } else {
                 setcookie(strtolower($this->container->get('settings')['app']['name']) . '_auth_token', 'invalid', time() - 1);
-                unset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth_token']);
+                unset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth']);
                 return $next($request, $response);
             }
         } else {
-            unset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth_token']);
+            unset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth']);
             return $next($request, $response);
         }
     }
