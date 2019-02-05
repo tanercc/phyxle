@@ -20,7 +20,7 @@ class Account extends Base
                 $email = htmlspecialchars(trim($request->getParam('email')));
                 $password = htmlspecialchars(trim($request->getParam('password')));
                 $check = User::where('email', $email)->value('password');
-                if(password_verify($password, $check)) {
+                if(password_verify($password . $this->container->get('settings')['app']['key'], $check)) {
                     setcookie(strtolower($this->container->get('settings')['app']['name']) . '_auth_token', User::where('email', $email)->value('unique_id'), strtotime('1 day'), '/');
                     User::where('email', $email)->update([
                         'logged_count' => User::where('email', $email)->value('logged_count') + 1,
@@ -58,12 +58,11 @@ class Account extends Base
                     if($this->container->get('settings')['app']['key'] === $appKey) {
                         $username = htmlspecialchars(trim($request->getParam('username')));
                         $password = htmlspecialchars(trim($request->getParam('password')));
-                        $passwordConfirm = htmlspecialchars(trim($request->getParam('password-confirm')));
                         User::insert([
                             'unique_id' => bin2hex(random_bytes(16)),
                             'username' => $username,
                             'email' => $email,
-                            'password' => password_hash($password, PASSWORD_ARGON2ID, [
+                            'password' => password_hash($password . $this->container->get('settings')['app']['key'], PASSWORD_ARGON2ID, [
                                 'memory_cost' => 2048,
                                 'time_cost' => 4,
                                 'threads' => 2
@@ -114,7 +113,7 @@ class Account extends Base
                 if(count($check) < 1) {
                     $currentPassword = htmlspecialchars(trim($request->getParam('current-password')));
                     $check = User::where('id', $this->authGet('id'))->value('password');
-                    if(password_verify($currentPassword, $check)) {
+                    if(password_verify($currentPassword . $this->container->get('settings')['app']['key'], $check)) {
                         $username = htmlspecialchars(trim($request->getParam('username')));
                         User::where('id', $this->authGet('id'))->update([
                             'username' => $username,
@@ -149,10 +148,10 @@ class Account extends Base
             if($validation === null) {
                 $currentPassword = htmlspecialchars(trim($request->getParam('current-password')));
                 $check = User::where('id', $this->authGet('id'))->value('password');
-                if(password_verify($currentPassword, $check)) {
+                if(password_verify($currentPassword . $this->container->get('settings')['app']['key'], $check)) {
                     $newPassword = htmlspecialchars(trim($request->getParam('new-password')));
                     User::where('id', $this->authGet('id'))->update([
-                        'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
+                        'password' => password_hash($newPassword . $this->container->get('settings')['app']['key'], PASSWORD_ARGON2ID, [
                             'memory_cost' => 2048,
                             'time_cost' => 4,
                             'threads' => 2
