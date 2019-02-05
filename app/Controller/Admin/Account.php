@@ -12,7 +12,7 @@ class Account extends Base
     public function login(Request $request, Response $response, array $data)
     {
         if(!$this->authCheck) {
-            $validation = $this->validate($request, [
+            $validation = $this->validator($request, [
                 'email' => 'required|email|max:191',
                 'password' => 'required|min:6|max:32'
             ]);
@@ -43,7 +43,7 @@ class Account extends Base
     public function register(Request $request, Response $response, array $data)
     {
         if(!$this->authCheck) {
-            $validation = $this->validate($request, [
+            $validation = $this->validator($request, [
                 'username' => 'required|max:16',
                 'email' => 'required|email|max:191',
                 'password' => 'required|min:6|max:32',
@@ -103,7 +103,7 @@ class Account extends Base
     public function updateDetails(Request $request, Response $response, array $data)
     {
         if($this->authCheck) {
-            $validation = $this->validate($request, [
+            $validation = $this->validator($request, [
                 'username' => 'required|max:16',
                 'email' => 'required|email|max:191',
                 'current-password' => 'required|min:6|max:32'
@@ -141,7 +141,7 @@ class Account extends Base
     public function changePassword(Request $request, Response $response, array $data)
     {
         if($this->authCheck) {
-            $validation = $this->validate($request, [
+            $validation = $this->validator($request, [
                 'current-password' => 'required|min:6|max:32',
                 'new-password' => 'required|min:6|max:32',
                 'new-password-confirm' => 'required|min:6|max:32|same:new-password'

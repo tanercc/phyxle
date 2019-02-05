@@ -38,7 +38,7 @@ class Media extends Base
     public function rename(Request $request, Response $response, array $data)
     {
         if($this->authCheck) {
-            $validation = $this->validate($request, [
+            $validation = $this->validator($request, [
                 'id' => 'required',
                 'name' => 'required|max:191'
             ]);
@@ -68,7 +68,7 @@ class Media extends Base
     public function delete(Request $request, Response $response, array $data)
     {
         if($this->authCheck) {
-            $validation = $this->validate($request, [
+            $validation = $this->validator($request, [
                 'id' => 'required'
             ]);
             if($validation === null) {

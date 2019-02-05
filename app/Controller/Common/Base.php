@@ -43,19 +43,19 @@ class Base
         return $mail->send($message);
     }
 
-    protected function image(string $name)
-    {
-        $image = $this->container->get('image');
-        return $image->make($name);
-    }
-
-    protected function validate(Request $request, array $input)
+    protected function validator(Request $request, array $input)
     {
         $validator = $this->container->get('validator');
         $validation = $validator->validate($request->getParams(), $input);
         if($validation->fails()) {
             return $validation->errors()->firstOfAll();
         }
+    }
+
+    protected function image(string $name)
+    {
+        $image = $this->container->get('image');
+        return $image->make($name);
     }
 
     protected function authGet(string $key)
