@@ -47,11 +47,11 @@ $settings = [
             'password' => getenv('MAIL_PASSWORD')
         ],
         'validator' => [
-            'required' => 'You cannot leave any empty field',
-            'min' => 'There is a minimum character limit',
-            'max' => 'There is a maximum character limit',
-            'email' => 'Email is not valid',
-            'same' => 'Password fields are do not match'
+            'required' => 'You Cannot Leave Any Empty Field',
+            'min' => 'There is a Minimum Character Limit',
+            'max' => 'There is a Maximum Character Limit',
+            'email' => 'Email is Invalid',
+            'same' => 'Password Fields are Do Not Match'
         ],
         'image' => [
             'driver' => 'gd'

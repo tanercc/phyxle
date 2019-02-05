@@ -28,7 +28,7 @@ class Account extends Base
                     ]);
                     return $response->withRedirect('/admin', 301);
                 } else {
-                    $this->data['error'] = "Email or password is invalid";
+                    $this->data['error'] = "Email or Password is Invalid";
                     return $this->view($response->withStatus(400), 'common/templates/validation.twig');
                 }
             } else {
@@ -73,11 +73,11 @@ class Account extends Base
                         ]);
                         return $response->withRedirect('/admin/account/login', 301);
                     } else {
-                        $this->data['error'] = "Your app key is invalid";
+                        $this->data['error'] = "Your App Key is Invalid";
                         return $this->view($response->withStatus(400), 'common/templates/validation.twig');
                     }
                 } else {
-                    $this->data['error'] = "There is an already account using that email";
+                    $this->data['error'] = "There is an Already Account Using That Email";
                     return $this->view($response->withStatus(400), 'common/templates/validation.twig');
                 }
             } else {
@@ -122,11 +122,11 @@ class Account extends Base
                         ]);
                         return $response->withRedirect('/admin/account', 301);
                     } else {
-                        $this->data['error'] = "Current password is invalid";
+                        $this->data['error'] = "Current Password is Invalid";
                         return $this->view($response->withStatus(400), 'common/templates/validation.twig');
                     }
                 } else {
-                    $this->data['error'] = "That email is already taken";
+                    $this->data['error'] = "That Email is Already Taken";
                     return $this->view($response->withStatus(400), 'common/templates/validation.twig');
                 }
             } else {
@@ -160,7 +160,7 @@ class Account extends Base
                     ]);
                     return $response->withRedirect('/admin/account', 301);
                 } else {
-                    $this->data['error'] = "Current password is invalid";
+                    $this->data['error'] = "Current Password is Invalid";
                     return $this->view($response->withStatus(400), 'common/templates/validation.twig');
                 }
             } else {

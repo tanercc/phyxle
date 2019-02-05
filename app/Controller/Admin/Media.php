@@ -53,7 +53,7 @@ class Media extends Base
                     ]);
                     return $response->withRedirect('/admin/media', 301);
                 } else {
-                    $this->data['error'] = "Cannot use that name";
+                    $this->data['error'] = "Cannot Use That Name";
                     return $this->view($response->withStatus(400), 'common/templates/validation.twig');
                 }
             } else {
