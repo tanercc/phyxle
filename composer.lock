@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3445bc2b97dde38a7f6a3e20bf0ea3d2",
+    "content-hash": "ee4576b00eaba76c838e5e6324e8c341",
     "packages": [
         {
             "name": "bryanjhv/slim-session",

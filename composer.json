@@ -15,6 +15,7 @@
         "illuminate/database": "^5.7",
         "illuminate/events": "^5.7",
         "intervention/image": "^2.4",
+        "nesbot/carbon": "1.36.2",
         "rakit/validation": "^1.1",
         "slim/csrf": "^0.8.3",
         "slim/slim": "^3.12",
@@ -22,8 +23,7 @@
         "symfony/dotenv": "^4.2",
         "symfony/filesystem": "^4.2",
         "symfony/var-dumper": "^4.2",
-        "twig/twig": "^2.6",
-        "nesbot/carbon": "1.36.2"
+        "twig/twig": "^2.6"
     },
     "autoload": {
         "psr-4": {
