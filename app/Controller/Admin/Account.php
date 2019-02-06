@@ -58,18 +58,44 @@ class Account extends Base
                     if($this->container->get('settings')['app']['key'] === $appKey) {
                         $username = htmlspecialchars(trim($request->getParam('username')));
                         $password = htmlspecialchars(trim($request->getParam('password')));
-                        User::insert([
-                            'unique_id' => bin2hex(random_bytes(16)),
-                            'username' => $username,
-                            'email' => $email,
-                            'password' => password_hash($password . $this->container->get('settings')['app']['key'], PASSWORD_ARGON2ID, [
-                                'memory_cost' => 2048,
-                                'time_cost' => 4,
-                                'threads' => 2
-                            ]),
-                            'created_at' => $this->time::now(),
-                            'updated_at' => $this->time::now()
-                        ]);
+                        if($this->container->get('settings')['app']['hash'] === 'bcrypt') {
+                            User::insert([
+                                'unique_id' => bin2hex(random_bytes(16)),
+                                'username' => $username,
+                                'email' => $email,
+                                'password' => password_hash($password . $this->container->get('settings')['app']['key'], PASSWORD_BCRYPT),
+                                'created_at' => $this->time::now(),
+                                'updated_at' => $this->time::now()
+                            ]);
+                        }
+                        if($this->container->get('settings')['app']['hash'] === 'argon2i') {
+                            User::insert([
+                                'unique_id' => bin2hex(random_bytes(16)),
+                                'username' => $username,
+                                'email' => $email,
+                                'password' => password_hash($password . $this->container->get('settings')['app']['key'], PASSWORD_ARGON2I, [
+                                    'memory_cost' => 2048,
+                                    'time_cost' => 4,
+                                    'threads' => 2
+                                ]),
+                                'created_at' => $this->time::now(),
+                                'updated_at' => $this->time::now()
+                            ]);
+                        }
+                        if($this->container->get('settings')['app']['hash'] === 'argon2id') {
+                            User::insert([
+                                'unique_id' => bin2hex(random_bytes(16)),
+                                'username' => $username,
+                                'email' => $email,
+                                'password' => password_hash($password . $this->container->get('settings')['app']['key'], PASSWORD_ARGON2ID, [
+                                    'memory_cost' => 2048,
+                                    'time_cost' => 4,
+                                    'threads' => 2
+                                ]),
+                                'created_at' => $this->time::now(),
+                                'updated_at' => $this->time::now()
+                            ]);
+                        }
                         return $response->withRedirect('/admin/account/login', 301);
                     } else {
                         $this->data['error'] = "Your App Key is Invalid";
@@ -150,13 +176,29 @@ class Account extends Base
                 $check = User::where('id', $this->authGet('id'))->value('password');
                 if(password_verify($currentPassword . $this->container->get('settings')['app']['key'], $check)) {
                     $newPassword = htmlspecialchars(trim($request->getParam('new-password')));
-                    User::where('id', $this->authGet('id'))->update([
-                        'password' => password_hash($newPassword . $this->container->get('settings')['app']['key'], PASSWORD_ARGON2ID, [
-                            'memory_cost' => 2048,
-                            'time_cost' => 4,
-                            'threads' => 2
-                        ])
-                    ]);
+                    if($this->container->get('settings')['app']['hash'] === 'bcrypt') {
+                        User::where('id', $this->authGet('id'))->update([
+                            'password' => password_hash($newPassword . $this->container->get('settings')['app']['key'], PASSWORD_BCRYPT)
+                        ]);
+                    }
+                    if($this->container->get('settings')['app']['hash'] === 'argon2i') {
+                        User::where('id', $this->authGet('id'))->update([
+                            'password' => password_hash($newPassword . $this->container->get('settings')['app']['key'], PASSWORD_ARGON2I, [
+                                'memory_cost' => 2048,
+                                'time_cost' => 4,
+                                'threads' => 2
+                            ])
+                        ]);
+                    }
+                    if($this->container->get('settings')['app']['hash'] === 'argon2id') {
+                        User::where('id', $this->authGet('id'))->update([
+                            'password' => password_hash($newPassword . $this->container->get('settings')['app']['key'], PASSWORD_ARGON2ID, [
+                                'memory_cost' => 2048,
+                                'time_cost' => 4,
+                                'threads' => 2
+                            ])
+                        ]);
+                    }
                     return $response->withRedirect('/admin/account', 301);
                 } else {
                     $this->data['error'] = "Current Password is Invalid";

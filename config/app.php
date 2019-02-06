@@ -17,7 +17,8 @@ $settings = [
             'url' => getenv('APP_URL'),
             'key' => getenv('APP_KEY'),
             'media' => getenv('APP_MEDIA'),
-            'errors' => (getenv('APP_ERRORS') == 'true' ? true : false)
+            'errors' => (getenv('APP_ERRORS') == 'true' ? true : false),
+            'hash' => getenv('APP_HASH')
         ],
         'view' => [
             'views' => __DIR__ . '/../resources/views/',

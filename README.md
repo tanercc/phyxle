@@ -71,6 +71,31 @@ ALTER TABLE `media`
 - Update `APP_MEDIA` in `.env` file with your absolute path to `resources/media` directory
 - Make sure to set `APP_ERRORS` true in `.env` file in production mode
 
+## Environment Variables
+Environment variables can be found at `.env` file. Here's the reference for `.env`.
+
+- `APP_NAME` - Set your app name
+- `APP_DESCRIPTION` - Set your app description
+- `APP_KEYWORDS` - Define your app keywords here
+- `APP_AUTHOR` - Define your app author's name here. Probably you.
+- `APP_URL` - Set app URL here or it'll break the system
+- `APP_KEY` - Set app key here. That has to be 16 characters long. Don't share it with anyone. All passwords will be hashed with this key. Once you set key, don't change it or it'll break the system. And probably you'll need app key to register backend users.
+- `APP_MEDIA` - Set absolute path to upload media or it'll break the system
+- `APP_ERRORS` - In production mode, set it true. Available options are `true` and `false`.
+- `APP_HASH` - Set password hashing method. Once you set method, don't change it or it'll break the system. Available options are `bcrypt`, `argon2i` and `argon2id`.
+- `DB_DRIVER` - Set database driver
+- `DB_HOST` - Set database host
+- `DB_DATABASE` - Set database name
+- `DB_USERNAME` - Set database username
+- `DB_PASSWORD` - Set database password
+- `DB_CHARSET` - Set database character set
+- `DB_COLLATION` - Set database collation
+- `DB_PREFIX` - Set table prefix
+- `MAIL_HOST` - Set SMTP host
+- `MAIL_PORT` - Set SMTP port
+- `MAIL_USERNAME` - Set SMTP username
+- `MAIL_PASSWORD` - Set SMTP password
+
 ## Controllers
 App controllers can be found at `app/Controller` directory. Every controller class must extends `App\Controller\Common\Base` class.
 ```php
