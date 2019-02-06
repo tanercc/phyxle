@@ -4,12 +4,45 @@
     </IfModule>
 
     RewriteEngine On
-    RewriteBase /
 
-    #RewriteCond %{HTTP_HOST} !^www\. [NC]
-    #RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+    ##
+    ## Website root directory
+    ##
+    #RewriteBase /
 
+    ##
+    ## Force HTTPS redirect
+    ##
+    #RewriteCond %{HTTPS} off
+    #RewriteRule (.*) https://www.%{SERVER_NAME}/$1 [L,R]
+
+    ##
+    ## Remove URL tailing slashes
+    ##
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R]
+
+    ##
+    ## Blacklist folders
+    ##
+    RewriteRule ^app/.* index.php [L,F]
+    RewriteRule ^cache/.* index.php [L,F]
+    RewriteRule ^config/.* index.php [L,F]
+    RewriteRule ^resources/views/.* index.php [L,F]
+    RewriteRule ^vendor/.* index.php [L,F]
+
+    ##
+    ## Blacklist files
+    ##
+    RewriteRule /?\.env$ - [L,F]
+    RewriteRule /?\.htaccess$ - [L,F]
+    RewriteRule /?\.json$ - [L,F]
+    RewriteRule /?\.lock$ - [L,F]
+
+    ##
+    ## Standard route
+    ##
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule . index.php [L]
+    RewriteRule ^ index.php [L]
 </IfModule>
