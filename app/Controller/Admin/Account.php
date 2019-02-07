@@ -136,7 +136,7 @@ class Account extends Base
             if($validation === null) {
                 $email = htmlspecialchars(trim($request->getParam('email')));
                 $check = User::where('email', $email)->get();
-                if(count($check) < 1) {
+                if(count($check) < 2) {
                     $currentPassword = htmlspecialchars(trim($request->getParam('current-password')));
                     $check = User::where('id', $this->authGet('id'))->value('password');
                     if(password_verify($currentPassword . $this->container->get('settings')['app']['key'], $check)) {
