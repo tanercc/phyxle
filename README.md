@@ -207,20 +207,48 @@ Get environment variables in `.env` file by using `getenv` function.
 {{ getenv('VARIABLE') }}
 ```
 
-Here's all other global variables available.
+Here's all global variables available.
 ```twig
+{# Get app name #}
 {{ app.name }}
+
+{# Get app description #}
 {{ app.description }}
+
+{# Get app keywords #}
 {{ app.keywords }}
+
+{# Get app author #}
 {{ app.author }}
+
+{# Get app URL #}
+{{ app.url }}
+
+{# Check if authenticated #}
 {{ auth.check }}
+
+{# Get authenticated user's username #}
 {{ auth.username }}
+
+{# Get authenticated user's email #}
 {{ auth.email }}
+
+{# Get authenticated user's last login timestamp #}
 {{ auth.login.last }}
+
+{# Get authenticated user's login count #}
 {{ auth.login.count }}
+
+{# Get CSRF name key #}
 {{ csrf.name.key }}
+
+{# Get CSRF name value #}
 {{ csrf.name.value }}
+
+{# Get CSRF token key #}
 {{ csrf.token.key }}
+
+{# Get CSRF token value #}
 {{ csrf.token.value }}
 ```
 

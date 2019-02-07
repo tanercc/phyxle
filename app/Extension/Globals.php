@@ -23,7 +23,8 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
                 'version' => $this->container->get('settings')['app']['version'],
                 'description' => $this->container->get('settings')['app']['description'],
                 'keywords' => $this->container->get('settings')['app']['keywords'],
-                'author' => $this->container->get('settings')['app']['author']
+                'author' => $this->container->get('settings')['app']['author'],
+                'url' => $this->container->get('settings')['app']['url']
             ],
             'auth' => [
                 'check' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? true : false,

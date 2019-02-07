@@ -14,8 +14,6 @@ class AdminPages extends Base
     {
         if($this->authCheck) {
             $this->data = [
-                'appUrl' => $this->container->get('settings')['app']['url'],
-                'appKey' => $this->container->get('settings')['app']['key'],
                 'phpVersion' => phpVersion(),
                 'usersCount' => count(User::all())
             ];
@@ -29,12 +27,10 @@ class AdminPages extends Base
     {
         if($this->authCheck) {
             $this->data = [
-                'appUrl' => $this->container->get('settings')['app']['url'],
-                'appKey' => $this->container->get('settings')['app']['key'],
                 'phpVersion' => phpVersion(),
                 'usersCount' => count(User::all()),
-                'users' => User::all(),
-                'media' => Medium::all()
+                'users' => User::orderBy('id', 'asc')->get(),
+                'media' => Medium::orderBy('size', 'desc')->get()
             ];
             return $this->view($response, 'admin/account.twig');
         } else {
@@ -72,7 +68,7 @@ class AdminPages extends Base
     public function media(Request $request, Response $response, array $data)
     {
         if($this->authCheck) {
-            $this->data['media'] = Medium::all();
+            $this->data['media'] = Medium::orderBy('name', 'asc')->get();
             return $this->view($response, 'admin/media.twig');
         } else {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
