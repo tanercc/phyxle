@@ -20,6 +20,7 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
         return [
             'app' => [
                 'name' => $this->container->get('settings')['app']['name'],
+                'version' => $this->container->get('settings')['app']['version'],
                 'description' => $this->container->get('settings')['app']['description'],
                 'keywords' => $this->container->get('settings')['app']['keywords'],
                 'author' => $this->container->get('settings')['app']['author']

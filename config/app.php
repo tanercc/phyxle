@@ -11,6 +11,7 @@ $settings = [
         'routerCacheFile' => false,
         'app' => [
             'name' => getenv('APP_NAME'),
+            'version' => '0.1.2-dev',
             'description' => getenv('APP_DESCRIPTION'),
             'keywords' => getenv('APP_KEYWORDS'),
             'author' => getenv('APP_AUTHOR'),
