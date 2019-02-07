@@ -49,7 +49,7 @@
                                     <span>Last Login</span>
                                 </th>
                                 <td class="has-text-right">
-                                    {{ auth.login.last }}
+                                    {{ auth.login.last|date('d/m/Y g:i:s a') }}
                                 </td>
                             </tr>
                             <tr>
@@ -178,7 +178,7 @@
                                         {{ user.username }}
                                     </td>
                                     <td class="has-text-right">
-                                        {{ user.created_at }}
+                                        {{ user.created_at|date('d/m/Y g:i:s a') }}
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -122,7 +122,7 @@
                         Last Login
                     </p>
                     <p class="title is-6">
-                        {{ auth.login.last }}
+                        {{ auth.login.last|date('d/m/Y g:i:s a') }}
                     </p>
                 </div>
             </div>
