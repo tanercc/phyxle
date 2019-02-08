@@ -1,7 +1,7 @@
 {% extends 'admin/layouts/base.twig' %}
 
-{% set title = 'Login to Your Account' %}
-{% set id = 'login' %}
+{% set title = 'Create a New Account' %}
+{% set id = 'register' %}
 
 {% block content %}
 <div class="columns is-centered">
@@ -17,9 +17,15 @@
             </div>
             <div class="columns">
                 <div class="column">
-                    <form action="{{ 'admin/account/login'|link }}" method="post">
+                    <form action="{{ 'admin/account/register'|link }}" method="post">
                         <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
                         <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                        <div class="field">
+                            <label class="label">Enter your username</label>
+                            <div class="control">
+                                <input class="input" name="username" type="text" placeholder="Username" maxlength="16" autofocus required />
+                            </div>
+                        </div>
                         <div class="field">
                             <label class="label">Enter your email</label>
                             <div class="control">
@@ -33,12 +39,24 @@
                             </div>
                         </div>
                         <div class="field">
+                            <label class="label">Confirm your password</label>
+                            <div class="control">
+                                <input class="input" name="password-confirm" type="password" placeholder="Confirm Password" minlength="6" maxlength="32" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Enter your app key</label>
+                            <div class="control">
+                                <input class="input" name="app-key" type="text" placeholder="App Key" minlength="16" maxlength="16" required />
+                            </div>
+                        </div>
+                        <div class="field">
                             <div class="has-text-right">
                                 <button class="button is-success">
                                     <span class="icon">
-                                        <i class="fas fa-sign-in-alt"></i>
+                                        <i class="fas fa-user-plus"></i>
                                     </span>
-                                    <span>Login</span>
+                                    <span>Register</span>
                                 </button>
                             </div>
                         </div>

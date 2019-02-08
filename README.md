@@ -197,9 +197,9 @@ Get raw image of uploaded media from admin panel by using `media` filter.
 {{ 'example.jpg'|media }}
 ```
 
-Get thumbnail of uploaded media from admin panel by using `thumb` filter.
+Get thumbnail of uploaded media from admin panel by using `thumbnail` filter.
 ```twig
-{{ 'example.jpg'|thumb }}
+{{ 'example.jpg'|thumbnail }}
 ```
 
 Define internal page URLs by using `link` filter.
@@ -228,6 +228,9 @@ Here's all global variables available.
 
 {# Get app URL #}
 {{ app.url }}
+
+{# Get current PHP version #}
+{{ app.php }}
 
 {# Check if authenticated #}
 {{ auth.check }}
@@ -301,6 +304,7 @@ Then load above container in `index.php` file. It is important to add require li
 require_once __DIR__ . "/config/middleware/csrf.php";
 require_once __DIR__ . "/config/middleware/auth.php";
 // Add your container here
+
 require_once __DIR__ . "/config/view.php";
 require_once __DIR__ . "/config/filesystem.php";
 ```

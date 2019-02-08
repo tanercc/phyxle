@@ -5,8 +5,12 @@ use App\Extension\Functions;
 use App\Extension\Globals;
 use Slim\Container;
 
+// View container
 $container['view'] = function(Container $container) {
+    // View settings
     $settings = $container->get('settings')['view'];
+
+    // Create view object
     $view = new Twig_Environment(new Twig_Loader_Filesystem($settings['views']), [
         'debug' => $settings['debug'],
         'charset' => $settings['charset'],
@@ -17,8 +21,12 @@ $container['view'] = function(Container $container) {
         'autoescape' => $settings['autoEscape'],
         'optimizations' => $settings['optimizations']
     ]);
+
+    // Add custom view extensions
     $view->addExtension(new Filters($container));
     $view->addExtension(new Functions($container));
     $view->addExtension(new Globals($container));
+
+    // Return view object
     return $view;
 };

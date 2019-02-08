@@ -1,6 +1,21 @@
 {
     "name": "enindu/phyxle",
     "description": "Rapid web development environment, based on Slim framework",
+    "keywords": [
+        "php",
+        "slim",
+        "twig",
+        "eloquent-orm",
+        "swift-mailer",
+        "carbon",
+        "filesystem",
+        "validation",
+        "image",
+        "slim-session",
+        "slim-csrf",
+        "authentication",
+        "admin-dashboard"
+    ],
     "type": "project",
     "license": "MIT",
     "authors": [

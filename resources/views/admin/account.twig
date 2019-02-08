@@ -49,7 +49,7 @@
                                     <span>Last Login</span>
                                 </th>
                                 <td class="has-text-right">
-                                    {{ auth.login.last|date('d/m/Y g:i:s a') }}
+                                    {{ auth.login.last|date('d/m/Y g:i a') }}
                                 </td>
                             </tr>
                             <tr>
@@ -122,7 +122,7 @@
                                     <span>PHP Version</span>
                                 </th>
                                 <td class="has-text-right">
-                                    {{ phpVersion }}
+                                    {{ app.php }}
                                 </td>
                             </tr>
                             <tr>
@@ -133,7 +133,7 @@
                                     <span>Backend Users</span>
                                 </th>
                                 <td class="has-text-right">
-                                    {{ usersCount }}
+                                    {{ accounts|length }}
                                 </td>
                             </tr>
                         </tbody>
@@ -172,13 +172,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in users %}
+                            {% for account in accounts %}
                                 <tr>
                                     <td class="has-text-left">
-                                        {{ user.username }}
+                                        {{ account.username }}
                                     </td>
                                     <td class="has-text-right">
-                                        {{ user.created_at|date('d/m/Y g:i:s a') }}
+                                        {{ account.created_at|date('d/m/Y g:i a') }}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -265,19 +265,19 @@
                         <div class="field">
                             <lable class="label">Enter your new username</lable>
                             <div class="control">
-                                <input class="input" name="username" type="text" placeholder="New Username" value="{{ auth.username }}" required />
+                                <input class="input" name="username" type="text" placeholder="New Username" maxlength="16" value="{{ auth.username }}" required />
                             </div>
                         </div>
                         <div class="field">
                             <lable class="label">Enter your new email</lable>
                             <div class="control">
-                                <input class="input" name="email" type="text" placeholder="New Email" value="{{ auth.email }}" required />
+                                <input class="input" name="email" type="text" placeholder="New Email" maxlength="191" value="{{ auth.email }}" required />
                             </div>
                         </div>
                         <div class="field">
                             <lable class="label">Enter your current password</lable>
                             <div class="control">
-                                <input class="input" name="current-password" type="password" placeholder="Current Password" required />
+                                <input class="input" name="current-password" type="password" placeholder="Current Password" minlength="6" maxlength="32" required />
                             </div>
                         </div>
                         <div class="field has-text-right">
@@ -309,19 +309,19 @@
                         <div class="field">
                             <lable class="label">Enter your current password</lable>
                             <div class="control">
-                                <input class="input" name="current-password" type="password" placeholder="Current Password" required />
+                                <input class="input" name="current-password" type="password" placeholder="Current Password" minlength="6" maxlength="32" required />
                             </div>
                         </div>
                         <div class="field">
                             <lable class="label">Enter your new password</lable>
                             <div class="control">
-                                <input class="input" name="new-password" type="password" placeholder="New Password" required />
+                                <input class="input" name="new-password" type="password" placeholder="New Password" minlength="6" maxlength="32" required />
                             </div>
                         </div>
                         <div class="field">
                             <lable class="label">Confirm your new password</lable>
                             <div class="control">
-                                <input class="input" name="new-password-confirm" type="password" placeholder="Confirm New Password" required />
+                                <input class="input" name="new-password-confirm" type="password" placeholder="Confirm New Password" minlength="6" maxlength="32" required />
                             </div>
                         </div>
                         <div class="field has-text-right">

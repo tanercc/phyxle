@@ -73,7 +73,7 @@
                         </div>
                         <div class="card-image">
                             <div class="image">
-                                <img src="{{ medium.name|thumb }}" alt="{{ medium.name }}" />
+                                <img src="{{ medium.name|thumbnail }}" alt="{{ medium.name }}" />
                             </div>
                         </div>
                         <div class="card-content">
@@ -83,7 +83,7 @@
                                 <input name="id" type="hidden" value="{{ medium.id }}" />
                                 <div class="field has-addons">
                                     <div class="control">
-                                        <input class="input" name="name" type="text" value="{{ medium.name }}" placeholder="Name" required/>
+                                        <input class="input" name="name" type="text" value="{{ medium.name }}" placeholder="Name" maxlength="191" required/>
                                     </div>
                                     <div class="control">
                                         <button class="button is-success">
