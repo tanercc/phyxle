@@ -21,6 +21,7 @@ class Filters extends Twig_Extension
         return [
             new Twig_Filter('asset', [$this, 'asset']),
             new Twig_Filter('media', [$this, 'media']),
+            new Twig_Filter('thumb', [$this, 'thumb']),
             new Twig_Filter('link', [$this, 'link'])
         ];
     }
@@ -40,8 +41,19 @@ class Filters extends Twig_Extension
     {
         $filesystem = $this->container->get('filesystem');
         $url = $this->container->get('settings')['app']['url'];
-        if($filesystem->exists(__DIR__ . '/../../resources/media/' . $file)) {
-            return $url . "/resources/media/" . $file;
+        if($filesystem->exists(__DIR__ . '/../../resources/media/originals/' . $file)) {
+            return $url . "/resources/media/originals/" . $file;
+        } else {
+            throw new Twig_Error_Runtime('Unable to find "' . $file . '".');
+        }
+    }
+
+    public function thumb(string $file)
+    {
+        $filesystem = $this->container->get('filesystem');
+        $url = $this->container->get('settings')['app']['url'];
+        if($filesystem->exists(__DIR__ . '/../../resources/media/thumbnails/' . $file)) {
+            return $url . "/resources/media/thumbnails/" . $file;
         } else {
             throw new Twig_Error_Runtime('Unable to find "' . $file . '".');
         }

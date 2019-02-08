@@ -192,9 +192,14 @@ Define assets by using `asset` filter.
 {{ 'css/example.css'|asset }}
 ```
 
-Define uploaded media from admin panel by using `media` filter.
+Get raw image of uploaded media from admin panel by using `media` filter.
 ```twig
 {{ 'example.jpg'|media }}
+```
+
+Get thumbnail of uploaded media from admin panel by using `thumb` filter.
+```twig
+{{ 'example.jpg'|thumb }}
 ```
 
 Define internal page URLs by using `link` filter.

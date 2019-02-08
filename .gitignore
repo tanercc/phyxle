@@ -1,3 +1,4 @@
 cache/*
-resources/media/*
+resources/media/originals/*
+resources/media/thumbnails/*
 vendor/
