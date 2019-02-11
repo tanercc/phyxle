@@ -29,6 +29,7 @@
     RewriteRule ^app/.* index.php [L,F]
     RewriteRule ^cache/.* index.php [L,F]
     RewriteRule ^config/.* index.php [L,F]
+    RewriteRule ^node_modules/.* index.php [L,F]
     RewriteRule ^resources/views/.* index.php [L,F]
     RewriteRule ^vendor/.* index.php [L,F]
 

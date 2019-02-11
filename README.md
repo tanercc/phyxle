@@ -23,6 +23,12 @@ $ composer create-project enindu/phyxle <project name>
 $ git clone https://github.com/enindu/phyxle.git
 ```
 
+Once you installed correctly, make sure to install install [npm](https://www.npmjs.com) packages too.
+```
+$ cd <project folder>
+$ npm install
+```
+
 ## Configuration
 Basic configurations can be found at `.env` file and all configurations can be found at `config/app.php` file. After installation there are few things you need do manually.
 

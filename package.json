@@ -1,0 +1,41 @@
+{
+  "name": "phyxle",
+  "version": "1.0.0",
+  "description": "Rapid web development environment, based on Slim framework",
+  "main": "resources/assets/sass/style.scss",
+  "scripts": {
+    "build": "node-sass --omit-source-map-url resources/assets/sass/style.scss resources/assets/css/style.css",
+    "watch": "npm run build -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enindu/phyxle.git"
+  },
+  "keywords": [
+      "php",
+      "slim",
+      "twig",
+      "eloquent-orm",
+      "swift-mailer",
+      "carbon",
+      "filesystem",
+      "validation",
+      "image",
+      "slim-session",
+      "slim-csrf",
+      "authentication",
+      "admin-dashboard"
+  ],
+  "author": "Enindu Alahapperuma",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/enindu/phyxle/issues"
+  },
+  "homepage": "https://github.com/enindu/phyxle",
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.7.1",
+    "bulma": "^0.7.4",
+    "bulma-helpers": "^0.3.6",
+    "node-sass": "^4.11.0"
+  }
+}

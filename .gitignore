@@ -1,4 +1,7 @@
 cache/*
+node_modules/
 resources/media/originals/*
 resources/media/thumbnails/*
 vendor/
+composer.lock
+package-lock.json
