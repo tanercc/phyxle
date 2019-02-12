@@ -51,7 +51,7 @@ class AdminPages extends Base
 
         // Set Twig data
         $this->data = [
-            'accounts' => Account::orderBy('id', 'asc')->get(),
+            'accounts' => Account::orderBy('logged_count', 'desc')->get(),
             'media' => Medium::orderBy('size', 'desc')->get()
         ];
 
@@ -117,6 +117,46 @@ class AdminPages extends Base
 
         // Return response
         return $this->view($response, 'admin/account_logout.twig');
+    }
+
+    /**
+     * Return forgot password page
+     *
+     * @param Request  $request  PSR-7 request object
+     * @param Response $response PSR-7 response object
+     * @param array    $data     URL parameters
+     *
+     * @return Response
+     */
+    public function forgotPassword(Request $request, Response $response, array $data)
+    {
+        // Check if authenticated
+        if($this->authCheck) {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Return response
+        return $this->view($response, 'admin/account_forgot_password.twig');
+    }
+
+    /**
+     * Return reset password page
+     *
+     * @param Request  $request  PSR-7 request object
+     * @param Response $response PSR-7 response object
+     * @param array    $data     URL parameters
+     *
+     * @return Response
+     */
+    public function resetPassword(Request $request, Response $response, array $data)
+    {
+        // Check if authenticated
+        if($this->authCheck) {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Return response
+        return $this->view($response, 'admin/account_reset_password.twig');
     }
 
     /**

@@ -45,6 +45,9 @@ $settings = [
             // App URL
             'url' => getenv('APP_URL'),
 
+            // App email
+            'email' => getenv('APP_EMAIL'),
+
             // App key
             'key' => getenv('APP_KEY'),
 

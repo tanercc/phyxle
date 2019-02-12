@@ -29,9 +29,10 @@ Basic configurations can be found at `.env` file and all configurations can be f
 - Add `APP_KEY` in `.env` file that has to be 16 characters long. Make sure it has special characters like `!@#$&*?` and combination of numbers, uppercase characters and lowercase characters. Don't share it with anyone. You'll need app key to register backend users.
 - Import `phyxle.sql` using [phpMyAdmin](https://www.phpmyadmin.net) or create `users` and `media` tables manually. After creating database tables make sure to delete `phyxle.sql` file.
 ```sql
-CREATE TABLE `users` (
+CREATE TABLE `accounts` (
     `id` int(11) NOT NULL,
     `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `reset_key` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `username` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
     `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -39,14 +40,14 @@ CREATE TABLE `users` (
     `last_logged_at` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `created_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `updated_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
 
-ALTER TABLE `users`
+ALTER TABLE `accounts`
     ADD PRIMARY KEY (`id`),
     ADD UNIQUE KEY `unique_id` (`unique_id`),
     ADD UNIQUE KEY `email` (`email`);
 
-ALTER TABLE `users`
+ALTER TABLE `accounts`
     MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ```
 ```sql
@@ -76,9 +77,10 @@ Environment variables can be found at `.env` file. Here's the reference for `.en
 
 - `APP_NAME` - Set your app name
 - `APP_DESCRIPTION` - Set your app description
-- `APP_KEYWORDS` - Define your app keywords here
-- `APP_AUTHOR` - Define your app author's name here. Probably you.
-- `APP_URL` - Set app URL here or it'll break the system
+- `APP_KEYWORDS` - Define your app keywords
+- `APP_AUTHOR` - Define your app author's name. Probably you.
+- `APP_URL` - Set app URL or it'll break the system
+- `APP_EMAIL` - Set app default email
 - `APP_KEY` - Set app key here. That has to be 16 characters long. Don't share it with anyone. All passwords will be hashed with this key. Once you set key, don't change it or it'll break the system. And probably you'll need app key to register backend users.
 - `APP_MEDIA` - Set absolute path to upload media or it'll break the system
 - `APP_ERRORS` - In production mode, set it true. Available options are `true` and `false`.

@@ -60,6 +60,7 @@ class Accounts extends Base
         $loggedCount = Account::where('email', $email)->value('logged_count') + 1;
 
         Account::where('email', $email)->update([
+            'reset_key' => null,
             'logged_count' => $loggedCount,
             'last_logged_at' => $this->time::now()
         ]);
@@ -125,7 +126,7 @@ class Accounts extends Base
 
         if($hashMethod === 'bcrypt') {
             Account::insert([
-                'unique_id' => bin2hex(random_bytes(16)),
+                'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_BCRYPT),
@@ -136,7 +137,7 @@ class Accounts extends Base
 
         if($hashMethod === 'argon2i') {
             Account::insert([
-                'unique_id' => bin2hex(random_bytes(16)),
+                'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_ARGON2I, [
@@ -151,7 +152,7 @@ class Accounts extends Base
 
         if($hashMethod === 'argon2id') {
             Account::insert([
-                'unique_id' => bin2hex(random_bytes(16)),
+                'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_ARGON2ID, [
@@ -199,6 +200,149 @@ class Accounts extends Base
 
         // Return response
         return $response->withRedirect('/', 301);
+    }
+
+    /**
+     * Send password reset mail
+     *
+     * @param Request  $request  PSR-7 request object
+     * @param Response $response PSR-7 response object
+     * @param array    $data     URL parameters
+     *
+     * @return Response
+     */
+    public function forgotPassword(Request $request, Response $response, array $data)
+    {
+        // Check if authenticated
+        if($this->authCheck) {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if input validation is failed
+        $validation = $this->validator($request, [
+            'email' => 'required|email|max:191'
+        ]);
+
+        if($validation !== null) {
+            $this->data['error'] = reset($validation);
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
+        // Get input values
+        $email = htmlspecialchars(trim($request->getParam('email')));
+
+        // Check if email is invalid
+        $checkEmail = Account::where('email', $email)->first();
+
+        if($checkEmail === null) {
+            $this->data['error'] = "There's No Account Using That Email";
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
+        // Send password reset email
+        $appName = $this->container->get('settings')['app']['name'];
+        $appEmail = $this->container->get('settings')['app']['email'];
+        $resetKey = bin2hex(random_bytes(3));
+
+        $this->mail([
+            'subject' => ucfirst($appName) . ' - Reset Password',
+            'from' => $appEmail,
+            'to' => $email,
+            'body' => '<p>Someone has requested to reset your password. If this was a mistake, ignore this email.</p>' .
+            '<p>Password reset key is ' . $resetKey . ' .</p>'
+        ]);
+
+        // Update database
+        Account::where('email', $email)->update([
+            'reset_key' => $resetKey
+        ]);
+
+        // Return response
+        return $response->withRedirect('/admin/account/reset-password', 301);
+    }
+
+    /**
+     * Reset forgotten password
+     *
+     * @param Request  $request  PSR-7 request object
+     * @param Response $response PSR-7 response object
+     * @param array    $data     URL parameters
+     *
+     * @return Response
+     */
+    public function resetPassword(Request $request, Response $response, array $data)
+    {
+        // Check if authenticated
+        if($this->authCheck) {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if input validation is failed
+        $validation = $this->validator($request, [
+            'reset-key' => 'required|min:6|max:6',
+            'email' => 'required|email|max:191',
+            'new-password' => 'required|min:6|max:32',
+            'new-password-confirm' => 'required|min:6|max:32|same:new-password'
+        ]);
+
+        if($validation !== null) {
+            $this->data['error'] = reset($validation);
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
+        // Get input values
+        $resetKey = htmlspecialchars(trim($request->getParam('reset-key')));
+        $email = htmlspecialchars(trim($request->getParam('email')));
+        $newPassword = htmlspecialchars(trim($request->getParam('new-password'))) . $this->container->get('settings')['app']['key'];
+
+        // Check if reset key is invalid
+        $checkResetKey = Account::where('email', $email)->value('reset_key');
+
+        if($resetKey !== $checkResetKey) {
+            Account::where('email', $email)->update([
+                'reset_key' => null
+            ]);
+
+            $this->data['error'] = "Your Reset Key is Invalid";
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
+        // Reset password
+        $hashMethod = $this->container->get('settings')['app']['hash'];
+
+        if($hashMethod === 'bcrypt') {
+            Account::where('email', $email)->update([
+                'password' => password_hash($newPassword, PASSWORD_BCRYPT)
+            ]);
+        }
+
+        if($hashMethod === 'argon2i') {
+            Account::where('email', $email)->update([
+                'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
+                    'memory_cost' => 2048,
+                    'time_cost' => 4,
+                    'threads' => 2
+                ])
+            ]);
+        }
+
+        if($hashMethod === 'argon2id') {
+            Account::where('email', $email)->update([
+                'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
+                    'memory_cost' => 2048,
+                    'time_cost' => 4,
+                    'threads' => 2
+                ])
+            ]);
+        }
+
+        // Update database
+        Account::where('email', $email)->update([
+            'reset_key' => null
+        ]);
+
+        // Return response
+        return $response->withRedirect('/admin/account/login', 301);
     }
 
     /**
