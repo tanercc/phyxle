@@ -81,6 +81,7 @@ Environment variables can be found at `.env` file. Here's the reference for `.en
 - `APP_AUTHOR` - Define your app author's name. Probably you.
 - `APP_URL` - Set app URL or it'll break the system
 - `APP_EMAIL` - Set app default email
+- `APP_TIMEZONE` - Set app default timezone
 - `APP_KEY` - Set app key here. That has to be 16 characters long. Don't share it with anyone. All passwords will be hashed with this key. Once you set key, don't change it or it'll break the system. And probably you'll need app key to register backend users.
 - `APP_MEDIA` - Set absolute path to upload media or it'll break the system
 - `APP_ERRORS` - In production mode, set it true. Available options are `true` and `false`.

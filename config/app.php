@@ -31,7 +31,7 @@ $settings = [
             'name' => getenv('APP_NAME'),
 
             // App version
-            'version' => '0.1.3-dev',
+            'version' => '0.1.3',
 
             // App description
             'description' => getenv('APP_DESCRIPTION'),
@@ -47,6 +47,9 @@ $settings = [
 
             // App email
             'email' => getenv('APP_EMAIL'),
+
+            // App timezone
+            'timezone' => getenv('APP_TIMEZONE'),
 
             // App key
             'key' => getenv('APP_KEY'),

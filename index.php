@@ -12,6 +12,9 @@ $dotenv = new Dotenv;
 
 $dotenv->load(__DIR__ . '/.env');
 
+// Set app timezone
+date_default_timezone_set(getenv('APP_TIMEZONE'));
+
 // Require app settings
 require_once __DIR__ . "/config/app.php";
 

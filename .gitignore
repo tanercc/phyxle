@@ -3,5 +3,6 @@ node_modules/
 resources/media/originals/*
 resources/media/thumbnails/*
 vendor/
+.env.example
 composer.lock
 package-lock.json
