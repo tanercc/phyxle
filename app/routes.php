@@ -23,6 +23,7 @@ $app->get('/admin/account/reset-password', AdminPages::class . ':resetPassword')
 $app->post('/admin/account/reset-password', Accounts::class . ':resetPassword');
 $app->post('/admin/account/update-details', Accounts::class . ':updateDetails');
 $app->post('/admin/account/change-password', Accounts::class . ':changePassword');
+$app->post('/admin/account/delete', Accounts::class . ':delete');
 $app->get('/admin/media', AdminPages::class . ':media');
 $app->post('/admin/media/upload', Media::class . ':upload');
 $app->post('/admin/media/rename', Media::class . ':rename');

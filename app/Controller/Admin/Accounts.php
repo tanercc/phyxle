@@ -478,4 +478,49 @@ class Accounts extends Base
         // Return response
         return $response->withRedirect('/admin/account', 301);
     }
+
+    /**
+     * Delete your account
+     *
+     * @param Request  $request  PSR-7 request object
+     * @param Response $response PSR-7 response object
+     * @param array    $data     URL parameters
+     *
+     * @return Response
+     */
+    public function delete(Request $request, Response $response, array $data)
+    {
+        // Check if not authenticated
+        if(!$this->authCheck) {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if input validation is failed
+        $validation = $this->validator($request, [
+            'current-password' => 'required|min:6|max:32'
+        ]);
+
+        if($validation !== null) {
+            $this->data['error'] = reset($validation);
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
+        // Get input values
+        $currentPassword = htmlspecialchars(trim($request->getParam('current-password'))) . $this->container->get('settings')['app']['key'];
+
+        // Check if current password is invalid
+        $id = $this->authGet('id');
+        $checkCurrentPassword = Account::where('id', $id)->value('password');
+
+        if(!password_verify($currentPassword, $checkCurrentPassword)) {
+            $this->data['error'] = "Current Password is Invalid";
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
+        // Update database
+        Account::where('id', $id)->delete();
+
+        // Return response
+        return $this->logout($request, $response, []);
+    }
 }
