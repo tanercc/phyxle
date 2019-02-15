@@ -520,7 +520,20 @@ class Accounts extends Base
         // Update database
         Account::where('id', $id)->delete();
 
+        // Remove authentication cookie
+        $cookieName = strtolower($this->container->get('settings')['app']['name']) . "_auth_token";
+        $cookieValue = "delete";
+        $cookieExpires = strtotime('now') - 1;
+        $cookiePath = "/";
+
+        setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
+
+        // Remove authentication session
+        $sessionName = strtolower($this->container->get('settings')['app']['name']) . "_auth";
+
+        unset($_SESSION[$sessionName]);
+
         // Return response
-        return $this->logout($request, $response, []);
+        return $response->withRedirect('/', 301);
     }
 }
