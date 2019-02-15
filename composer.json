@@ -2,19 +2,18 @@
     "name": "enindu/phyxle",
     "description": "Rapid web development environment, based on Slim framework",
     "keywords": [
-        "php",
-        "slim",
-        "twig",
-        "eloquent-orm",
-        "swift-mailer",
         "carbon",
+        "csrf",
+        "database",
+        "dotenv",
         "filesystem",
-        "validation",
         "image",
-        "slim-session",
-        "slim-csrf",
-        "authentication",
-        "admin-dashboard"
+        "php",
+        "session",
+        "slim",
+        "swiftmailer",
+        "twig",
+        "validation"
     ],
     "type": "project",
     "license": "MIT",
@@ -37,8 +36,10 @@
         "swiftmailer/swiftmailer": "^6.1",
         "symfony/dotenv": "^4.2",
         "symfony/filesystem": "^4.2",
-        "symfony/var-dumper": "^4.2",
         "twig/twig": "^2.6"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^4.2"
     },
     "autoload": {
         "psr-4": {
