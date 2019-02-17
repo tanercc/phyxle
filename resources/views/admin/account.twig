@@ -147,111 +147,6 @@
             <div class="columns">
                 <div class="column">
                     <div class="has-text-centered">
-                        <h1 class="title">Users</h1>
-                        <h2 class="subtitle">Backend Users</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="columns">
-                <div class="column">
-                    <table class="table is-fullwidth is-hoverable">
-                        <thead>
-                            <tr>
-                                <th class="has-text-left">
-                                    <span class="icon">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                    <span>Username</span>
-                                </th>
-                                <th class="has-text-right">
-                                    <span class="icon">
-                                        <i class="fas fa-clock"></i>
-                                    </span>
-                                    <span>Created At</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for account in accounts %}
-                                <tr>
-                                    <td class="has-text-left">
-                                        {{ account.username }}
-                                    </td>
-                                    <td class="has-text-right">
-                                        {{ account.created_at|date('d/m/Y g:i a') }}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="box">
-            {% if media|length > 0 %}
-                <div class="columns">
-                    <div class="column">
-                        <div class="has-text-centered">
-                            <h1 class="title">Media</h1>
-                            <h2 class="subtitle">Uploaded Media</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="columns">
-                    <div class="column">
-                        <table class="table is-fullwidth is-hoverable">
-                            <thead>
-                                <tr>
-                                    <th class="has-text-left">
-                                        <span class="icon">
-                                            <i class="fas fa-file-image"></i>
-                                        </span>
-                                        <span>Media</span>
-                                    </th>
-                                    <th class="has-text-right">
-                                        <span class="icon">
-                                            <i class="fas fa-file-alt"></i>
-                                        </span>
-                                        <span>Size</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for medium in media %}
-                                    <tr>
-                                        <td class="has-text-left">
-                                            {{ medium.name }}
-                                        </td>
-                                        <td class="has-text-right">
-                                            {{ medium.size }} KB
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            {% else %}
-                <div class="columns">
-                    <div class="column">
-                        <div class="has-text-centered">
-                            <h1 class="title">
-                                <span class="icon">
-                                    <i class="far fa-frown"></i>
-                                </span>
-                                <span class="has-padding-left-10">No Media Found</span>
-                            </h1>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="column is-4">
-        <div class="box">
-            <div class="columns">
-                <div class="column">
-                    <div class="has-text-centered">
                         <h1 class="title">Details</h1>
                         <h2 class="subtitle">Update Account Details</h2>
                     </div>
@@ -333,6 +228,52 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-4">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Users</h1>
+                        <h2 class="subtitle">Backend Users</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <table class="table is-fullwidth is-hoverable">
+                        <thead>
+                            <tr>
+                                <th class="has-text-left">
+                                    <span class="icon">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <span>Username</span>
+                                </th>
+                                <th class="has-text-right">
+                                    <span class="icon">
+                                        <i class="fas fa-clock"></i>
+                                    </span>
+                                    <span>Created At</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for account in accounts %}
+                                <tr>
+                                    <td class="has-text-left">
+                                        {{ account.username }}
+                                    </td>
+                                    <td class="has-text-right">
+                                        {{ account.created_at|date('d/m/Y g:i a') }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
