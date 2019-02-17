@@ -50,10 +50,7 @@ class AdminPages extends Base
         }
 
         // Set Twig data
-        $this->data = [
-            'accounts' => Account::orderBy('logged_count', 'desc')->get(),
-            'media' => Medium::orderBy('size', 'desc')->get()
-        ];
+        $this->data['accounts'] = Account::orderBy('logged_count', 'desc')->get();
 
         // Return response
         return $this->view($response, 'admin/account.twig');
