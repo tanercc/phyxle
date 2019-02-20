@@ -188,7 +188,7 @@ class ExampleModel extends Model
 ```
 
 ## Views
-App views can be found at `resources/views` directory. Phyxle uses [Twig](https://twig.symfony.com) as template engine. You can extend Twig by adding more filters or functions or global variables that can be found at `app/Extension` directory. For more information, refer [Twig documentation](https://twig.symfony.com/doc/2.x/).
+App views can be found at `resources/views` directory and all other templates can be found at `resources/views/common` directory. (Error pages, mail template, etc.) Phyxle uses [Twig](https://twig.symfony.com) as template engine. You can extend Twig by adding more filters or functions or global variables that can be found at `app/Extension` directory. For more information, refer [Twig documentation](https://twig.symfony.com/doc/2.x/).
 
 Define assets by using `asset` filter.
 ```twig
