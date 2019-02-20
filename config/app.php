@@ -31,7 +31,7 @@ $settings = [
             'name' => getenv('APP_NAME'),
 
             // App version
-            'version' => '0.1.4',
+            'version' => '0.1.5-dev',
 
             // App description
             'description' => getenv('APP_DESCRIPTION'),
@@ -180,7 +180,7 @@ $settings = [
                 'httpOnly' => false,
 
                 // Session name
-                'name' => strtolower(getenv('APP_NAME')) . '_session',
+                'name' => str_replace(' ', '_', strtolower(getenv('APP_NAME'))) . '_session',
 
                 // Enable session auto refresh
                 'autoRefresh' => false,
@@ -192,7 +192,7 @@ $settings = [
             // CSRF array
             'csrf' => [
                 // CSRF prefix
-                'prefix' => strtolower(getenv('APP_NAME')) . '_csrf',
+                'prefix' => str_replace(' ', '_', strtolower(getenv('APP_NAME'))) . '_csrf',
 
                 // CSRF storage
                 'storage' => null,

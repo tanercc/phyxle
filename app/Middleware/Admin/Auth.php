@@ -36,8 +36,8 @@ class Auth
     public function __invoke(Request $request, Response $response, callable $next)
     {
         // Get cookie name, session name and database
-        $cookieName = strtolower($this->container->get('settings')['app']['name']) . "_auth_token";
-        $sessionName = strtolower($this->container->get('settings')['app']['name']) . "_auth";
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
+        $sessionName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth";
         $database = $this->container->get('database');
 
         // Get authentication cookie

@@ -60,21 +60,21 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
             // Auth array
             'auth' => [
                 // Check if authenticated or not
-                'check' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? true : false,
+                'check' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? true : false,
 
                 // Authenticated user's username
-                'username' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth']['username'] : null,
+                'username' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth']['username'] : null,
 
                 // Authenticated user's email
-                'email' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) .'_auth']['email'] : null,
+                'email' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) .'_auth']['email'] : null,
 
                 // Auth login array
                 'login' => [
                     // Authenticated user's last login timestamp
-                    'last' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) .'_auth']['lastLogin'] : null,
+                    'last' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) .'_auth']['lastLogin'] : null,
 
                     // Authenticated user's login count
-                    'count' => (isset($_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'])) ? $_SESSION[strtolower($this->container->get('settings')['app']['name']) .'_auth']['loginCount'] : null
+                    'count' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) .'_auth']['loginCount'] : null
                 ]
             ],
 

@@ -49,7 +49,7 @@ class Accounts extends Base
         }
 
         // Set authentication cookie
-        $cookieName = strtolower($this->container->get('settings')['app']['name']) . "_auth_token";
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
         $cookieValue = Account::where('email', $email)->value('unique_id');
         $cookieExpires = strtotime('1 day');
         $cookiePath = "/";
@@ -186,7 +186,7 @@ class Accounts extends Base
         }
 
         // Remove authentication cookie
-        $cookieName = strtolower($this->container->get('settings')['app']['name']) . "_auth_token";
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
         $cookieValue = "logout";
         $cookieExpires = strtotime('now') - 1;
         $cookiePath = "/";
@@ -194,7 +194,7 @@ class Accounts extends Base
         setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
 
         // Remove authentication session
-        $sessionName = strtolower($this->container->get('settings')['app']['name']) . "_auth";
+        $sessionName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth";
 
         unset($_SESSION[$sessionName]);
 
@@ -521,7 +521,7 @@ class Accounts extends Base
         Account::where('id', $id)->delete();
 
         // Remove authentication cookie
-        $cookieName = strtolower($this->container->get('settings')['app']['name']) . "_auth_token";
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
         $cookieValue = "delete";
         $cookieExpires = strtotime('now') - 1;
         $cookiePath = "/";
@@ -529,7 +529,7 @@ class Accounts extends Base
         setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
 
         // Remove authentication session
-        $sessionName = strtolower($this->container->get('settings')['app']['name']) . "_auth";
+        $sessionName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth";
 
         unset($_SESSION[$sessionName]);
 

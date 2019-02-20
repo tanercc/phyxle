@@ -36,7 +36,7 @@ class Base
         $this->container = $container;
 
         // Get if authenticated or not
-        $this->authCheck = (isset($_SESSION[strtolower($container->get('settings')['app']['name']) . '_auth']) ? true : false);
+        $this->authCheck = (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth']) ? true : false);
 
         // Get Carbon object from container
         $this->time = $container->get('time');
@@ -143,7 +143,7 @@ class Base
     {
         // Check if authenticated
         if($this->authCheck) {
-            return $_SESSION[strtolower($this->container->get('settings')['app']['name']) . '_auth'][$key];
+            return $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'][$key];
         }
     }
 }
