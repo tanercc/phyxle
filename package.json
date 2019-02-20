@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "build": "node-sass --omit-source-map-url resources/assets/sass/style.scss resources/assets/css/style.css",
+        "build": "node-sass --omit-source-map-url resources/assets/sass/phyxle.scss resources/assets/css/phyxle.css",
         "watch": "npm run build -- --watch"
     },
     "devDependencies": {
