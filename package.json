@@ -1,8 +1,8 @@
 {
     "private": true,
     "scripts": {
-        "build": "node-sass --omit-source-map-url resources/assets/sass/phyxle.scss resources/assets/css/phyxle.css",
-        "watch": "npm run build -- --watch"
+        "build-bulma": "node-sass resources/assets/sass/bulma.scss resources/assets/css/bulma.css",
+        "build-fontawesome": "node-sass resources/assets/sass/fontawesome.scss resources/assets/css/fontawesome.css"
     },
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^5.7.1",
