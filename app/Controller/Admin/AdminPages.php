@@ -152,6 +152,9 @@ class AdminPages extends Base
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
+        // Set Twig data
+        $this->data['resetToken'] = $request->getQueryParam('resetToken');
+
         // Return response
         return $this->view($response, 'admin/account_reset_password.twig');
     }

@@ -60,7 +60,7 @@ class Accounts extends Base
         $loggedCount = Account::where('email', $email)->value('logged_count') + 1;
 
         Account::where('email', $email)->update([
-            'reset_key' => null,
+            'reset_token' => null,
             'logged_count' => $loggedCount,
             'last_logged_at' => $this->time::now()
         ]);
@@ -126,7 +126,7 @@ class Accounts extends Base
 
         if($hashMethod === 'bcrypt') {
             Account::insert([
-                'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
+                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_BCRYPT),
@@ -137,7 +137,7 @@ class Accounts extends Base
 
         if($hashMethod === 'argon2i') {
             Account::insert([
-                'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
+                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_ARGON2I, [
@@ -152,7 +152,7 @@ class Accounts extends Base
 
         if($hashMethod === 'argon2id') {
             Account::insert([
-                'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
+                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_ARGON2ID, [
@@ -241,24 +241,28 @@ class Accounts extends Base
 
         // Send password reset email
         $appName = $this->container->get('settings')['app']['name'];
+        $appUrl = $this->container->get('settings')['app']['url'];
         $appEmail = $this->container->get('settings')['app']['email'];
-        $resetKey = bin2hex(random_bytes(3));
+        $resetToken = bin2hex(random_bytes(32));
 
         $this->mail([
             'subject' => ucfirst($appName) . ' - Reset Password',
             'from' => $appEmail,
             'to' => $email,
             'body' => '<p>Someone has requested to reset your password. If this was a mistake, ignore this email.</p>' .
-            '<p>Password reset key is ' . $resetKey . ' .</p>'
+            '<a href="' . $appUrl . '/admin/account/reset-password?resetToken=' . $resetToken . '" target="_blank">Reset Password</a>'
         ]);
 
         // Update database
         Account::where('email', $email)->update([
-            'reset_key' => $resetKey
+            'reset_token' => $resetToken
         ]);
 
         // Return response
-        return $response->withRedirect('/admin/account/reset-password', 301);
+        $this->data['title'] = "Check Your Email";
+        $this->data['subtitle'] = "Password Reset Email Has Been Sent";
+
+        return $this->view($response, 'common/templates/message.twig');
     }
 
     /**
@@ -279,7 +283,6 @@ class Accounts extends Base
 
         // Check if input validation is failed
         $validation = $this->validator($request, [
-            'reset-key' => 'required|min:6|max:6',
             'email' => 'required|email|max:191',
             'new-password' => 'required|min:6|max:32',
             'new-password-confirm' => 'required|min:6|max:32|same:new-password'
@@ -291,19 +294,19 @@ class Accounts extends Base
         }
 
         // Get input values
-        $resetKey = htmlspecialchars(trim($request->getParam('reset-key')));
+        $resetToken = htmlspecialchars(trim($request->getParam('reset-token')));
         $email = htmlspecialchars(trim($request->getParam('email')));
         $newPassword = htmlspecialchars(trim($request->getParam('new-password'))) . $this->container->get('settings')['app']['key'];
 
-        // Check if reset key is invalid
-        $checkResetKey = Account::where('email', $email)->value('reset_key');
+        // Check if reset token is invalid
+        $checkResetToken = Account::where('email', $email)->value('reset_token');
 
-        if($resetKey !== $checkResetKey) {
+        if($resetToken !== $checkResetToken) {
             Account::where('email', $email)->update([
-                'reset_key' => null
+                'reset_token' => null
             ]);
 
-            $this->data['error'] = "Your Reset Key is Invalid";
+            $this->data['error'] = "Your Reset Token is Invalid";
             return $this->view($response->withStatus(400), 'common/templates/validation.twig');
         }
 
@@ -338,7 +341,7 @@ class Accounts extends Base
 
         // Update database
         Account::where('email', $email)->update([
-            'reset_key' => null
+            'reset_token' => null
         ]);
 
         // Return response

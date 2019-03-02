@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 12, 2019 at 07:53 PM
--- Server version: 10.3.12-MariaDB
+-- Generation Time: Mar 03, 2019 at 04:23 AM
+-- Server version: 10.3.13-MariaDB
 -- PHP Version: 7.3.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -31,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `accounts` (
   `id` int(11) NOT NULL,
   `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `reset_key` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `username` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,

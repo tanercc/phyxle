@@ -32,7 +32,7 @@ Basic configurations can be found at `.env` file and all configurations can be f
 CREATE TABLE `accounts` (
     `id` int(11) NOT NULL,
     `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `reset_key` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `username` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
     `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
