@@ -4,11 +4,11 @@ namespace App\Model\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Account extends Model
+class AdminMedium extends Model
 {
     // Define timestamps in table
     public $timestamps = true;
 
     // Define table name
-    protected $table = "accounts";
+    protected $table = "admin_media";
 }

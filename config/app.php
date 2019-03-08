@@ -31,7 +31,7 @@ $settings = [
             'name' => getenv('APP_NAME'),
 
             // App version
-            'version' => '0.1.6-dev',
+            'version' => '0.2-dev',
 
             // App description
             'description' => getenv('APP_DESCRIPTION'),

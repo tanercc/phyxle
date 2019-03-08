@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
-use App\Controller\Common\Base;
+use App\Controller\Common\CommonBase;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class PublicPages extends Base
+class PublicPages extends CommonBase
 {
     /**
      * Return homepage

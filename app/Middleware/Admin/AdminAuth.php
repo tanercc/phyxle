@@ -6,13 +6,13 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Auth
+class AdminAuth
 {
     // Get contained packages from containers
     private $container;
 
     /**
-     * Auth middleware constructor
+     * AdminAuth middleware constructor
      *
      * @param Container $container PSR-11 container object
      *
@@ -25,7 +25,7 @@ class Auth
     }
 
     /**
-     * Auth middleware invoker
+     * AdminAuth middleware invoker
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -35,23 +35,27 @@ class Auth
      */
     public function __invoke(Request $request, Response $response, callable $next)
     {
-        // Get cookie name, session name and database
-        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
-        $sessionName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth";
+        // Get database
         $database = $this->container->get('database');
+
+        // Get cookie name and session name
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
+        $sessionName = "admin";
 
         // Get authentication cookie
         $cookie = $request->getCookieParam($cookieName);
 
-        // Check if authentication cookie is not setted
+        // Check if authentication cookie is not defined
         if($cookie === null) {
+            // Remove authentication session
             unset($_SESSION[$sessionName]);
 
+            // Return next middleware
             return $next($request, $response);
         }
 
         // Get authentication token
-        $token = $database->table('accounts')->where('unique_id', $cookie)->value('unique_id');
+        $token = $database->table('admin_accounts')->where('unique_id', $cookie)->value('unique_id');
 
         // Check if authentication token is invalid
         if($token === null) {
@@ -69,11 +73,11 @@ class Auth
         }
 
         // Get authenticated user details
-        $id = $database->table('accounts')->where('unique_id', $cookie)->value('id');
-        $username = $database->table('accounts')->where('unique_id', $cookie)->value('username');
-        $email = $database->table('accounts')->where('unique_id', $cookie)->value('email');
-        $lastLogin = $database->table('accounts')->where('unique_id', $cookie)->value('last_logged_at');
-        $loginCount = $database->table('accounts')->where('unique_id', $cookie)->value('logged_count');
+        $id = $database->table('admin_accounts')->where('unique_id', $cookie)->value('id');
+        $username = $database->table('admin_accounts')->where('unique_id', $cookie)->value('username');
+        $email = $database->table('admin_accounts')->where('unique_id', $cookie)->value('email');
+        $lastLogin = $database->table('admin_accounts')->where('unique_id', $cookie)->value('last_logged_at');
+        $loginCount = $database->table('admin_accounts')->where('unique_id', $cookie)->value('logged_count');
 
         // Set authenticated user details to session
         $_SESSION[$sessionName] = [

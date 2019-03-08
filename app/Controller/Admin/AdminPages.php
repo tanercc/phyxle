@@ -2,16 +2,16 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Common\Base;
-use App\Model\Admin\Account;
-use App\Model\Admin\Medium;
+use App\Controller\Common\CommonBase;
+use App\Model\Admin\AdminAccount;
+use App\Model\Admin\AdminMedium;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminPages extends Base
+class AdminPages extends CommonBase
 {
     /**
-     * Return admin homepage
+     * Return homepage
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -22,12 +22,12 @@ class AdminPages extends Base
     public function home(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $response->withRedirect('/admin/account/login', 301);
         }
 
         // Set Twig data
-        $this->data['accounts'] = Account::all();
+        $this->data['accounts'] = AdminAccount::all();
 
         // Return response
         return $this->view($response, 'admin/home.twig');
@@ -45,12 +45,12 @@ class AdminPages extends Base
     public function account(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
         // Set Twig data
-        $this->data['accounts'] = Account::orderBy('logged_count', 'desc')->get();
+        $this->data['accounts'] = AdminAccount::orderBy('logged_count', 'desc')->get();
 
         // Return response
         return $this->view($response, 'admin/account.twig');
@@ -68,7 +68,7 @@ class AdminPages extends Base
     public function login(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->authCheck) {
+        if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -88,7 +88,7 @@ class AdminPages extends Base
     public function register(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->authCheck) {
+        if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -108,7 +108,7 @@ class AdminPages extends Base
     public function logout(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -128,7 +128,7 @@ class AdminPages extends Base
     public function forgotPassword(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->authCheck) {
+        if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -148,7 +148,7 @@ class AdminPages extends Base
     public function resetPassword(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->authCheck) {
+        if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -171,12 +171,12 @@ class AdminPages extends Base
     public function media(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
         // Set Twig data
-        $this->data['media'] = Medium::orderBy('name', 'asc')->get();
+        $this->data['media'] = AdminMedium::orderBy('name', 'asc')->get();
 
         // Return response
         return $this->view($response, 'admin/media.twig');

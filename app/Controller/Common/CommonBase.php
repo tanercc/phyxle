@@ -6,7 +6,7 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Base
+class CommonBase
 {
     // Get contained packages from containers
     protected $container;
@@ -14,8 +14,8 @@ class Base
     // Pass data to Twig templates
     protected $data = [];
 
-    // Check authenticated or not
-    protected $authCheck;
+    // Check authenticated as admin or not
+    protected $admin;
 
     // Pass Carbon package to child controllers
     protected $time;
@@ -35,8 +35,8 @@ class Base
         // Get dependency container
         $this->container = $container;
 
-        // Get if authenticated or not
-        $this->authCheck = (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth']) ? true : false);
+        // Get if authenticated as admin or not
+        $this->admin = (isset($_SESSION['admin']) ? true : false);
 
         // Get Carbon object from container
         $this->time = $container->get('time');
@@ -133,17 +133,17 @@ class Base
     }
 
     /**
-     * Get authenticated user details
+     * Get authenticated admin details
      *
      * @param string $key Auth session variable
      *
      * @return string|void
      */
-    protected function authGet(string $key)
+    protected function admin(string $key)
     {
         // Check if authenticated
-        if($this->authCheck) {
-            return $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'][$key];
+        if($this->admin) {
+            return $_SESSION['admin'][$key];
         }
     }
 }

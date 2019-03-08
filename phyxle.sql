@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 03, 2019 at 04:23 AM
+-- Generation Time: Mar 08, 2019 at 09:11 PM
 -- Server version: 10.3.13-MariaDB
--- PHP Version: 7.3.2
+-- PHP Version: 7.3.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -25,10 +25,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `accounts`
+-- Table structure for table `admin_accounts`
 --
 
-CREATE TABLE `accounts` (
+CREATE TABLE `admin_accounts` (
   `id` int(11) NOT NULL,
   `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -44,10 +44,10 @@ CREATE TABLE `accounts` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `media`
+-- Table structure for table `admin_media`
 --
 
-CREATE TABLE `media` (
+CREATE TABLE `admin_media` (
   `id` int(11) NOT NULL,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `width` int(11) NOT NULL,
@@ -55,24 +55,24 @@ CREATE TABLE `media` (
   `size` int(11) NOT NULL,
   `created_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `updated_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `accounts`
+-- Indexes for table `admin_accounts`
 --
-ALTER TABLE `accounts`
+ALTER TABLE `admin_accounts`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_id` (`unique_id`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indexes for table `media`
+-- Indexes for table `admin_media`
 --
-ALTER TABLE `media`
+ALTER TABLE `admin_media`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
 
@@ -81,15 +81,15 @@ ALTER TABLE `media`
 --
 
 --
--- AUTO_INCREMENT for table `accounts`
+-- AUTO_INCREMENT for table `admin_accounts`
 --
-ALTER TABLE `accounts`
+ALTER TABLE `admin_accounts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `media`
+-- AUTO_INCREMENT for table `admin_media`
 --
-ALTER TABLE `media`
+ALTER TABLE `admin_media`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 

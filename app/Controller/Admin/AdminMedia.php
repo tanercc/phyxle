@@ -2,13 +2,13 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Common\Base;
-use App\Model\Admin\Medium;
+use App\Controller\Common\CommonBase;
+use App\Model\Admin\AdminMedium;
 use Intervention\Image\Constraint;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Media extends Base
+class AdminMedia extends CommonBase
 {
     /**
      * Upload media
@@ -22,7 +22,7 @@ class Media extends Base
     public function upload(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -40,7 +40,7 @@ class Media extends Base
             $name = $medium->getClientFilename();
 
             // Check if medium name is already in use
-            $checkName = Medium::where('name', $name)->first();
+            $checkName = AdminMedium::where('name', $name)->first();
 
             if($checkName !== null) {
                 continue;
@@ -91,7 +91,7 @@ class Media extends Base
             }
 
             // Update database
-            Medium::insert([
+            AdminMedium::insert([
                 'name' => $name,
                 'width' => $width,
                 'height' => $height,
@@ -117,7 +117,7 @@ class Media extends Base
     public function rename(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -137,7 +137,7 @@ class Media extends Base
         $name = htmlspecialchars(trim($request->getParam('name')));
 
         // Check if medium name is already in use
-        $checkName = Medium::where('name', $name)->first();
+        $checkName = AdminMedium::where('name', $name)->first();
 
         if($checkName !== null) {
             $this->data['error'] = "Cannot Use That Name";
@@ -145,9 +145,9 @@ class Media extends Base
         }
 
         // Get old and new paths for media
-        $originalOld = $this->container->get('settings')['app']['media'] . '/originals/' . Medium::where('id', $id)->value('name');
+        $originalOld = $this->container->get('settings')['app']['media'] . '/originals/' . AdminMedium::where('id', $id)->value('name');
         $originalNew = $this->container->get('settings')['app']['media'] . '/originals/' . $name;
-        $thumbnailOld = $this->container->get('settings')['app']['media'] . '/thumbnails/' . Medium::where('id', $id)->value('name');
+        $thumbnailOld = $this->container->get('settings')['app']['media'] . '/thumbnails/' . AdminMedium::where('id', $id)->value('name');
         $thumbnailNew = $this->container->get('settings')['app']['media'] . '/thumbnails/' . $name;
 
         // Rename media
@@ -155,7 +155,7 @@ class Media extends Base
         $this->filesystem->rename($thumbnailOld, $thumbnailNew);
 
         // Update database
-        Medium::where('id', $id)->update([
+        AdminMedium::where('id', $id)->update([
             'name' => $name
         ]);
 
@@ -175,7 +175,7 @@ class Media extends Base
     public function delete(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -193,15 +193,15 @@ class Media extends Base
         $id = htmlspecialchars(trim($request->getParam('id')));
 
         // Get media paths
-        $original = $this->container->get('settings')['app']['media'] . '/originals/' . Medium::where('id', $id)->value('name');
-        $thumbnail = $this->container->get('settings')['app']['media'] . '/thumbnails/' . Medium::where('id', $id)->value('name');
+        $original = $this->container->get('settings')['app']['media'] . '/originals/' . AdminMedium::where('id', $id)->value('name');
+        $thumbnail = $this->container->get('settings')['app']['media'] . '/thumbnails/' . AdminMedium::where('id', $id)->value('name');
 
         // Remove media
         $this->filesystem->remove($original);
         $this->filesystem->remove($thumbnail);
 
         // Update database
-        Medium::where('id', $id)->delete();
+        AdminMedium::where('id', $id)->delete();
 
         // Return response
         return $response->withRedirect('/admin/media', 301);

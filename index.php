@@ -24,7 +24,7 @@ $container = new Container($settings);
 // Load middleware to containers. Add new middleware bottom of this list.
 require_once __DIR__ . "/config/middleware/session.php";
 require_once __DIR__ . "/config/middleware/csrf.php";
-require_once __DIR__ . "/config/middleware/auth.php";
+require_once __DIR__ . "/config/middleware/admin-auth.php";
 
 // Load packages to containers. Add new packages bottom of this list.
 require_once __DIR__ . "/config/view.php";

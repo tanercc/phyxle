@@ -83,8 +83,8 @@
                     </div>
                 </div>
                 <div class="column is-10">
-                    <p class="heading">{{ auth.username }}</p>
-                    <p class="title is-6">{{ auth.email }}</p>
+                    <p class="heading">{{ auth.admin.username }}</p>
+                    <p class="title is-6">{{ auth.admin.email }}</p>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@
                 </div>
                 <div class="column is-10">
                     <p class="heading">Last Login</p>
-                    <p class="title is-6">{{ auth.login.last|date('d/m/Y g:i a') }}</p>
+                    <p class="title is-6">{{ auth.admin.login.last|date('d/m/Y g:i a') }}</p>
                 </div>
             </div>
         </div>
@@ -129,7 +129,7 @@
                 </div>
                 <div class="column is-10">
                     <p class="heading">Login Count</p>
-                    <p class="title is-6">{{ auth.login.count }}</p>
+                    <p class="title is-6">{{ auth.admin.login.count }}</p>
                 </div>
             </div>
         </div>

@@ -59,22 +59,25 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
 
             // Auth array
             'auth' => [
-                // Check if authenticated or not
-                'check' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? true : false,
+                // Admin array
+                'admin' => [
+                    // Check if authenticated or not
+                    'check' => (isset($_SESSION['admin'])) ? true : false,
 
-                // Authenticated user's username
-                'username' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth']['username'] : null,
+                    // Authenticated admin's username
+                    'username' => (isset($_SESSION['admin'])) ? $_SESSION['admin']['username'] : null,
 
-                // Authenticated user's email
-                'email' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) .'_auth']['email'] : null,
+                    // Authenticated admin's email
+                    'email' => (isset($_SESSION['admin'])) ? $_SESSION['admin']['email'] : null,
 
-                // Auth login array
-                'login' => [
-                    // Authenticated user's last login timestamp
-                    'last' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) .'_auth']['lastLogin'] : null,
+                    // Auth login array
+                    'login' => [
+                        // Authenticated admin's last login timestamp
+                        'last' => (isset($_SESSION['admin'])) ? $_SESSION['admin']['lastLogin'] : null,
 
-                    // Authenticated user's login count
-                    'count' => (isset($_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . '_auth'])) ? $_SESSION[str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) .'_auth']['loginCount'] : null
+                        // Authenticated user's login count
+                        'count' => (isset($_SESSION['admin'])) ? $_SESSION['admin']['loginCount'] : null
+                    ]
                 ]
             ],
 

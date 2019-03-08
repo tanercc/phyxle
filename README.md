@@ -29,7 +29,7 @@ Basic configurations can be found at `.env` file and all configurations can be f
 - Add `APP_KEY` in `.env` file that has to be 16 characters long. Make sure it has special characters like `!@#$&*?` and combination of numbers, uppercase characters and lowercase characters. Don't share it with anyone. You'll need app key to register backend users.
 - Import `phyxle.sql` using [phpMyAdmin](https://www.phpmyadmin.net) or create `users` and `media` tables manually. After creating database tables make sure to delete `phyxle.sql` file.
 ```sql
-CREATE TABLE `accounts` (
+CREATE TABLE `admin_accounts` (
     `id` int(11) NOT NULL,
     `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -42,16 +42,16 @@ CREATE TABLE `accounts` (
     `updated_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
 
-ALTER TABLE `accounts`
+ALTER TABLE `admin_accounts`
     ADD PRIMARY KEY (`id`),
     ADD UNIQUE KEY `unique_id` (`unique_id`),
     ADD UNIQUE KEY `email` (`email`);
 
-ALTER TABLE `accounts`
+ALTER TABLE `admin_accounts`
     MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ```
 ```sql
-CREATE TABLE `media` (
+CREATE TABLE `admin_media` (
     `id` int(11) NOT NULL,
     `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `width` int(11) NOT NULL,
@@ -61,11 +61,11 @@ CREATE TABLE `media` (
     `updated_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE `media`
+ALTER TABLE `admin_media`
     ADD PRIMARY KEY (`id`),
     ADD UNIQUE KEY `name` (`name`);
 
-ALTER TABLE `media`
+ALTER TABLE `admin_media`
     MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ```
 - Make sure to update `APP_URL` in `.env` file with your app URL

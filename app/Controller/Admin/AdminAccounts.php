@@ -2,12 +2,12 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Common\Base;
-use App\Model\Admin\Account;
+use App\Controller\Common\CommonBase;
+use App\Model\Admin\AdminAccount;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Accounts extends Base
+class AdminAccounts extends CommonBase
 {
     /**
      * Do login functions
@@ -21,7 +21,7 @@ class Accounts extends Base
     public function login(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->authCheck) {
+        if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -41,7 +41,7 @@ class Accounts extends Base
         $password = htmlspecialchars(trim($request->getParam('password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if email or password is invalid
-        $checkPassword = Account::where('email', $email)->value('password');
+        $checkPassword = AdminAccount::where('email', $email)->value('password');
 
         if(!password_verify($password, $checkPassword)) {
             $this->data['error'] = "Email or Password is Invalid";
@@ -50,16 +50,16 @@ class Accounts extends Base
 
         // Set authentication cookie
         $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
-        $cookieValue = Account::where('email', $email)->value('unique_id');
+        $cookieValue = AdminAccount::where('email', $email)->value('unique_id');
         $cookieExpires = strtotime('1 day');
         $cookiePath = "/";
 
         setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
 
         // Update database
-        $loggedCount = Account::where('email', $email)->value('logged_count') + 1;
+        $loggedCount = AdminAccount::where('email', $email)->value('logged_count') + 1;
 
-        Account::where('email', $email)->update([
+        AdminAccount::where('email', $email)->update([
             'reset_token' => null,
             'logged_count' => $loggedCount,
             'last_logged_at' => $this->time::now()
@@ -81,7 +81,7 @@ class Accounts extends Base
     public function register(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->authCheck) {
+        if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -106,7 +106,7 @@ class Accounts extends Base
         $appKey = htmlspecialchars(trim($request->getParam('app-key')));
 
         // Check if email is already in use
-        $checkEmail = Account::where('email', $email)->first();
+        $checkEmail = AdminAccount::where('email', $email)->first();
 
         if($checkEmail !== null) {
             $this->data['error'] = "There is an Already Account Using That Email";
@@ -125,7 +125,7 @@ class Accounts extends Base
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
         if($hashMethod === 'bcrypt') {
-            Account::insert([
+            AdminAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
@@ -136,7 +136,7 @@ class Accounts extends Base
         }
 
         if($hashMethod === 'argon2i') {
-            Account::insert([
+            AdminAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
@@ -151,7 +151,7 @@ class Accounts extends Base
         }
 
         if($hashMethod === 'argon2id') {
-            Account::insert([
+            AdminAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
@@ -181,7 +181,7 @@ class Accounts extends Base
     public function logout(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -214,7 +214,7 @@ class Accounts extends Base
     public function forgotPassword(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->authCheck) {
+        if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -232,7 +232,7 @@ class Accounts extends Base
         $email = htmlspecialchars(trim($request->getParam('email')));
 
         // Check if email is invalid
-        $checkEmail = Account::where('email', $email)->first();
+        $checkEmail = AdminAccount::where('email', $email)->first();
 
         if($checkEmail === null) {
             $this->data['error'] = "There's No Account Using That Email";
@@ -254,7 +254,7 @@ class Accounts extends Base
         ]);
 
         // Update database
-        Account::where('email', $email)->update([
+        AdminAccount::where('email', $email)->update([
             'reset_token' => $resetToken
         ]);
 
@@ -277,7 +277,7 @@ class Accounts extends Base
     public function resetPassword(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->authCheck) {
+        if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -299,10 +299,10 @@ class Accounts extends Base
         $newPassword = htmlspecialchars(trim($request->getParam('new-password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if reset token is invalid
-        $checkResetToken = Account::where('email', $email)->value('reset_token');
+        $checkResetToken = AdminAccount::where('email', $email)->value('reset_token');
 
         if($resetToken !== $checkResetToken) {
-            Account::where('email', $email)->update([
+            AdminAccount::where('email', $email)->update([
                 'reset_token' => null
             ]);
 
@@ -314,13 +314,13 @@ class Accounts extends Base
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
         if($hashMethod === 'bcrypt') {
-            Account::where('email', $email)->update([
+            AdminAccount::where('email', $email)->update([
                 'password' => password_hash($newPassword, PASSWORD_BCRYPT)
             ]);
         }
 
         if($hashMethod === 'argon2i') {
-            Account::where('email', $email)->update([
+            AdminAccount::where('email', $email)->update([
                 'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
                     'memory_cost' => 2048,
                     'time_cost' => 4,
@@ -330,7 +330,7 @@ class Accounts extends Base
         }
 
         if($hashMethod === 'argon2id') {
-            Account::where('email', $email)->update([
+            AdminAccount::where('email', $email)->update([
                 'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
                     'memory_cost' => 2048,
                     'time_cost' => 4,
@@ -340,7 +340,7 @@ class Accounts extends Base
         }
 
         // Update database
-        Account::where('email', $email)->update([
+        AdminAccount::where('email', $email)->update([
             'reset_token' => null
         ]);
 
@@ -360,7 +360,7 @@ class Accounts extends Base
     public function updateDetails(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -382,8 +382,8 @@ class Accounts extends Base
         $currentPassword = htmlspecialchars(trim($request->getParam('current-password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if email is already in use
-        $id = $this->authGet('id');
-        $checkId = Account::where('email', $email)->value('id');
+        $id = $this->admin('id');
+        $checkId = AdminAccount::where('email', $email)->value('id');
 
         if($checkId !== null && $id !== $checkId) {
             $this->data['error'] = "That Email is Already Taken";
@@ -391,7 +391,7 @@ class Accounts extends Base
         }
 
         // Check if current password is invalid
-        $checkCurrentPassword = Account::where('id', $id)->value('password');
+        $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
             $this->data['error'] = "Current Password is Invalid";
@@ -399,7 +399,7 @@ class Accounts extends Base
         }
 
         // Update database
-        Account::where('id', $id)->update([
+        AdminAccount::where('id', $id)->update([
             'username' => $username,
             'email' => $email
         ]);
@@ -420,7 +420,7 @@ class Accounts extends Base
     public function changePassword(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -441,8 +441,8 @@ class Accounts extends Base
         $newPassword = htmlspecialchars(trim($request->getParam('new-password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if current password is invalid
-        $id = $this->authGet('id');
-        $checkCurrentPassword = Account::where('id', $id)->value('password');
+        $id = $this->admin('id');
+        $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
             $this->data['error'] = "Current Password is Invalid";
@@ -453,13 +453,13 @@ class Accounts extends Base
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
         if($hashMethod === 'bcrypt') {
-            Account::where('id', $id)->update([
+            AdminAccount::where('id', $id)->update([
                 'password' => password_hash($newPassword, PASSWORD_BCRYPT)
             ]);
         }
 
         if($hashMethod === 'argon2i') {
-            Account::where('id', $id)->update([
+            AdminAccount::where('id', $id)->update([
                 'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
                     'memory_cost' => 2048,
                     'time_cost' => 4,
@@ -469,7 +469,7 @@ class Accounts extends Base
         }
 
         if($hashMethod === 'argon2id') {
-            Account::where('id', $id)->update([
+            AdminAccount::where('id', $id)->update([
                 'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
                     'memory_cost' => 2048,
                     'time_cost' => 4,
@@ -494,7 +494,7 @@ class Accounts extends Base
     public function delete(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->authCheck) {
+        if(!$this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -512,8 +512,8 @@ class Accounts extends Base
         $currentPassword = htmlspecialchars(trim($request->getParam('current-password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if current password is invalid
-        $id = $this->authGet('id');
-        $checkCurrentPassword = Account::where('id', $id)->value('password');
+        $id = $this->admin('id');
+        $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
             $this->data['error'] = "Current Password is Invalid";
@@ -521,7 +521,7 @@ class Accounts extends Base
         }
 
         // Update database
-        Account::where('id', $id)->delete();
+        AdminAccount::where('id', $id)->delete();
 
         // Remove authentication cookie
         $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
