@@ -25,6 +25,7 @@ $container = new Container($settings);
 require_once __DIR__ . "/config/middleware/session.php";
 require_once __DIR__ . "/config/middleware/csrf.php";
 require_once __DIR__ . "/config/middleware/admin-auth.php";
+require_once __DIR__ . "/config/middleware/public-auth.php";
 
 // Load packages to containers. Add new packages bottom of this list.
 require_once __DIR__ . "/config/view.php";
