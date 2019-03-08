@@ -2,52 +2,46 @@
     <h1 class="title">{{ app.name }}</h1>
     <hr />
     {% if auth.check %}
-    <p class="menu-label">
-        Dashboard
-    </p>
-    <ul class="menu-list">
-        <li>
-            <a class="{{ id == 'home' ? 'is-active' }}" href="{{ 'admin'|link }}">
-                <span class="icon">
-                    <i class="fas fa-home"></i>
-                </span>
-                <span>Home</span>
-            </a>
-        </li>
-        <li>
-            <a class="{{ id == 'account' ? 'is-active' }}" href="{{ 'admin/account'|link }}">
-                <span class="icon">
-                    <i class="fas fa-user"></i>
-                </span>
-                <span>Account</span>
-            </a>
-        </li>
-        <li>
-            <a class="{{ id == 'media' ? 'is-active' }}" href="{{ 'admin/media'|link }}">
-                <span class="icon">
-                    <i class="fas fa-image"></i>
-                </span>
-                <span>Media</span>
-            </a>
-        </li>
-    </ul>
-    <p class="menu-label">
-        Account
-    </p>
-    <ul class="menu-list">
-        <li>
-            <a class="{{ id == 'logout' ? 'is-active' }}" href="{{ 'admin/account/logout'|link }}">
-                <span class="icon">
-                    <i class="fas fa-sign-out-alt"></i>
-                </span>
-                <span>Logout</span>
-            </a>
-        </li>
-    </ul>
+        <p class="menu-label">Dashboard</p>
+        <ul class="menu-list">
+            <li>
+                <a class="{{ id == 'home' ? 'is-active' }}" href="{{ 'admin'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-home"></i>
+                    </span>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a class="{{ id == 'account' ? 'is-active' }}" href="{{ 'admin/account'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <span>Account</span>
+                </a>
+            </li>
+            <li>
+                <a class="{{ id == 'media' ? 'is-active' }}" href="{{ 'admin/media'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-image"></i>
+                    </span>
+                    <span>Media</span>
+                </a>
+            </li>
+        </ul>
+        <p class="menu-label">Account</p>
+        <ul class="menu-list">
+            <li>
+                <a class="{{ id == 'logout' ? 'is-active' }}" href="{{ 'admin/account/logout'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
     {% else %}
-        <p class="menu-label">
-            Account
-        </p>
+        <p class="menu-label">Account</p>
         <ul class="menu-list">
             <li>
                 <a class="{{ id == 'login' ? 'is-active' }}" href="{{ 'admin/account/login'|link }}">
@@ -75,9 +69,7 @@
             </li>
         </ul>
     {% endif %}
-    <p class="menu-label">
-        Website
-    </p>
+    <p class="menu-label">Website</p>
     <ul class="menu-list">
         <li>
             <a href="{{ ''|link }}" target="_blank" rel="noopener">
