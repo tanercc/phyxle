@@ -54,6 +54,7 @@ ALTER TABLE `admin_accounts`
 CREATE TABLE `public_accounts` (
     `id` int(11) NOT NULL,
     `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `activation_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -68,6 +69,7 @@ ALTER TABLE `public_accounts`
     ADD PRIMARY KEY (`id`),
     ADD UNIQUE KEY `unique_id` (`unique_id`),
     ADD UNIQUE KEY `email` (`email`);
+    ADD UNIQUE KEY `activation_token` (`activation_token`);
 
 ALTER TABLE `public_accounts`
     MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

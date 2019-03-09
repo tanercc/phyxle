@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 10, 2019 at 02:37 AM
+-- Generation Time: Mar 10, 2019 at 04:15 AM
 -- Server version: 10.3.13-MariaDB
 -- PHP Version: 7.3.3
 
@@ -66,6 +66,7 @@ CREATE TABLE `admin_media` (
 CREATE TABLE `public_accounts` (
   `id` int(11) NOT NULL,
   `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `activation_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -101,7 +102,8 @@ ALTER TABLE `admin_media`
 ALTER TABLE `public_accounts`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_id` (`unique_id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `activation_token` (`activation_token`);
 
 --
 -- AUTO_INCREMENT for dumped tables
