@@ -48,6 +48,14 @@ class PublicAccounts extends CommonBase
             return $this->view($response->withStatus(400), 'common/templates/validation.twig');
         }
 
+        // Check if account is not activated
+        $checkActivate = PublicAccount::where('email', $email)->value('activation_token');
+
+        if($checkActivate !== null) {
+            $this->data['error'] = "You Must Activate Your Account First";
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
         // Set authentication cookie
         $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_public_auth_token";
         $cookieValue = PublicAccount::where('email', $email)->value('unique_id');
@@ -114,10 +122,12 @@ class PublicAccounts extends CommonBase
 
         // Update database
         $hashMethod = $this->container->get('settings')['app']['hash'];
+        $activationToken = bin2hex(random_bytes(32));
 
         if($hashMethod === 'bcrypt') {
             PublicAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
+                'activation_token' => $activationToken,
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_BCRYPT),
@@ -129,6 +139,7 @@ class PublicAccounts extends CommonBase
         if($hashMethod === 'argon2i') {
             PublicAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
+                'activation_token' => $activationToken,
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_ARGON2I, [
@@ -144,6 +155,7 @@ class PublicAccounts extends CommonBase
         if($hashMethod === 'argon2id') {
             PublicAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
+                'activation_token' => $activationToken,
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_ARGON2ID, [
@@ -156,8 +168,63 @@ class PublicAccounts extends CommonBase
             ]);
         }
 
+        // Send account activation email
+        $appName = $this->container->get('settings')['app']['name'];
+        $appUrl = $this->container->get('settings')['app']['url'];
+        $appEmail = $this->container->get('settings')['app']['email'];
+
+        $this->mail([
+            'subject' => ucfirst($appName) . ' - Account Activation',
+            'from' => $appEmail,
+            'to' => $email,
+            'body' => '<p>Hello ' . $username . '. Your account has been created. Click below link to activate account.</p>' .
+            '<a href="' . $appUrl . '/account/activate?token=' . $activationToken . '" target="_blank">Activate Account</a>'
+        ]);
+
         // Return response
-        return $response->withRedirect('/account/login', 301);
+        $this->data['title'] = "Check Your Email";
+        $this->data['subtitle'] = "Account Activation Email Has Been Sent";
+
+        return $this->view($response, 'common/templates/message.twig');
+    }
+
+    /**
+     * Activate account
+     *
+     * @param Request  $request  PSR-7 request object
+     * @param Response $response PSR-7 response object
+     * @param array    $data     URL parameters
+     *
+     * @return Response
+     */
+    public function activate(Request $request, Response $response, array $data)
+    {
+        // Check if authenticated
+        if($this->public) {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Get activation token
+        $activationToken = $request->getQueryParam('token');
+
+        // Check if activation token is invalid
+        $checkActivationToken = PublicAccount::where('activation_token', $activationToken)->first();
+
+        if($checkActivationToken === null) {
+            $this->data['error'] = "Activation Token is Invalid";
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
+        // Update database
+        PublicAccount::where('activation_token', $activationToken)->update([
+            'activation_token' => null
+        ]);
+
+        // Return response
+        $this->data['title'] = "Account Activated";
+        $this->data['subtitle'] = "Now You Can Login to Your Account";
+
+        return $this->view($response, 'common/templates/message.twig');
     }
 
     /**
@@ -228,11 +295,17 @@ class PublicAccounts extends CommonBase
             return $this->view($response->withStatus(400), 'common/templates/validation.twig');
         }
 
+        // Update database
+        $resetToken = bin2hex(random_bytes(32));
+
+        PublicAccount::where('email', $email)->update([
+            'reset_token' => $resetToken
+        ]);
+
         // Send password reset email
         $appName = $this->container->get('settings')['app']['name'];
         $appUrl = $this->container->get('settings')['app']['url'];
         $appEmail = $this->container->get('settings')['app']['email'];
-        $resetToken = bin2hex(random_bytes(32));
 
         $this->mail([
             'subject' => ucfirst($appName) . ' - Reset Password',
@@ -240,11 +313,6 @@ class PublicAccounts extends CommonBase
             'to' => $email,
             'body' => '<p>Someone has requested to reset your password. If this was a mistake, ignore this email.</p>' .
             '<a href="' . $appUrl . '/account/reset-password?token=' . $resetToken . '" target="_blank">Reset Password</a>'
-        ]);
-
-        // Update database
-        PublicAccount::where('email', $email)->update([
-            'reset_token' => $resetToken
         ]);
 
         // Return response

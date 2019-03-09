@@ -153,7 +153,7 @@ class AdminPages extends CommonBase
         }
 
         // Set Twig data
-        $this->data['resetToken'] = $request->getQueryParam('resetToken');
+        $this->data['token'] = $request->getQueryParam('token');
 
         // Return response
         return $this->view($response, 'admin/account_reset_password.twig');

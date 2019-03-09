@@ -13,6 +13,7 @@ $app->get('/account/login', PublicPages::class . ':login');
 $app->post('/account/login', PublicAccounts::class . ':login');
 $app->get('/account/register', PublicPages::class . ':register');
 $app->post('/account/register', PublicAccounts::class . ':register');
+$app->get('/account/activate', PublicAccounts::class . ':activate');
 $app->get('/account/logout', PublicPages::class . ':logout');
 $app->post('/account/logout', PublicAccounts::class . ':logout');
 $app->get('/account/forgot-password', PublicPages::class . ':forgotPassword');

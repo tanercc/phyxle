@@ -237,23 +237,24 @@ class AdminAccounts extends CommonBase
             return $this->view($response->withStatus(400), 'common/templates/validation.twig');
         }
 
+        // Update database
+        $resetToken = bin2hex(random_bytes(32));
+
+        AdminAccount::where('email', $email)->update([
+            'reset_token' => $resetToken
+        ]);
+
         // Send password reset email
         $appName = $this->container->get('settings')['app']['name'];
         $appUrl = $this->container->get('settings')['app']['url'];
         $appEmail = $this->container->get('settings')['app']['email'];
-        $resetToken = bin2hex(random_bytes(32));
 
         $this->mail([
             'subject' => ucfirst($appName) . ' - Reset Password',
             'from' => $appEmail,
             'to' => $email,
             'body' => '<p>Someone has requested to reset your password. If this was a mistake, ignore this email.</p>' .
-            '<a href="' . $appUrl . '/admin/account/reset-password?resetToken=' . $resetToken . '" target="_blank">Reset Password</a>'
-        ]);
-
-        // Update database
-        AdminAccount::where('email', $email)->update([
-            'reset_token' => $resetToken
+            '<a href="' . $appUrl . '/admin/account/reset-password?token=' . $resetToken . '" target="_blank">Reset Password</a>'
         ]);
 
         // Return response
