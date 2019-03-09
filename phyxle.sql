@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 08, 2019 at 09:11 PM
+-- Generation Time: Mar 10, 2019 at 02:37 AM
 -- Server version: 10.3.13-MariaDB
 -- PHP Version: 7.3.3
 
@@ -57,6 +57,25 @@ CREATE TABLE `admin_media` (
   `updated_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `public_accounts`
+--
+
+CREATE TABLE `public_accounts` (
+  `id` int(11) NOT NULL,
+  `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `logged_count` int(11) NOT NULL DEFAULT 0,
+  `last_logged_at` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `updated_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
+
 --
 -- Indexes for dumped tables
 --
@@ -77,6 +96,14 @@ ALTER TABLE `admin_media`
   ADD UNIQUE KEY `name` (`name`);
 
 --
+-- Indexes for table `public_accounts`
+--
+ALTER TABLE `public_accounts`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_id` (`unique_id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -90,6 +117,12 @@ ALTER TABLE `admin_accounts`
 -- AUTO_INCREMENT for table `admin_media`
 --
 ALTER TABLE `admin_media`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `public_accounts`
+--
+ALTER TABLE `public_accounts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 

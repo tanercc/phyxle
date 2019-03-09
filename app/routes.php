@@ -1,12 +1,27 @@
 <?php
 
 use App\Controller\Admin\AdminAccounts;
-use App\Controller\Admin\AdminPages;
 use App\Controller\Admin\AdminMedia;
+use App\Controller\Admin\AdminPages;
+use App\Controller\PublicAccounts;
 use App\Controller\PublicPages;
 
 // Public routes
 $app->get('/', PublicPages::class . ':home');
+$app->get('/account', PublicPages::class . ':account');
+$app->get('/account/login', PublicPages::class . ':login');
+$app->post('/account/login', PublicAccounts::class . ':login');
+$app->get('/account/register', PublicPages::class . ':register');
+$app->post('/account/register', PublicAccounts::class . ':register');
+$app->get('/account/logout', PublicPages::class . ':logout');
+$app->post('/account/logout', PublicAccounts::class . ':logout');
+$app->get('/account/forgot-password', PublicPages::class . ':forgotPassword');
+$app->post('/account/forgot-password', PublicAccounts::class . ':forgotPassword');
+$app->get('/account/reset-password', PublicPages::class . ':resetPassword');
+$app->post('/account/reset-password', PublicAccounts::class . ':resetPassword');
+$app->post('/account/update-details', PublicAccounts::class . ':updateDetails');
+$app->post('/account/change-password', PublicAccounts::class . ':changePassword');
+$app->post('/account/delete', PublicAccounts::class . ':delete');
 
 // Admin routes
 $app->get('/admin', AdminPages::class . ':home');

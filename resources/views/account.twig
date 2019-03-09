@@ -1,0 +1,143 @@
+{% extends 'layouts/base.twig' %}
+
+{% set title = 'Manage Your Account' %}
+{% set id = 'account' %}
+
+{% block content %}
+<div class="columns">
+    <div class="column">
+        <div class="has-text-centered">
+            <h1 class="title">Welcome {{ auth.public.username }}!</h1>
+            <h2 class="subtitle">Manage Your Account</h2>
+        </div>
+    </div>
+</div>
+<div class="columns is-centered">
+    <div class="column is-3">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Details</h1>
+                        <h2 class="subtitle">Update Account Details</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <form action="{{ 'account/update-details'|link }}" method="post">
+                        <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                        <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                        <div class="field">
+                            <lable class="label">Enter your new username</lable>
+                            <div class="control">
+                                <input class="input" name="username" type="text" placeholder="New Username" maxlength="16" value="{{ auth.public.username }}" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <lable class="label">Enter your new email</lable>
+                            <div class="control">
+                                <input class="input" name="email" type="text" placeholder="New Email" maxlength="191" value="{{ auth.public.email }}" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <lable class="label">Enter your current password</lable>
+                            <div class="control">
+                                <input class="input" name="current-password" type="password" placeholder="Current Password" minlength="6" maxlength="32" required />
+                            </div>
+                        </div>
+                        <div class="field has-text-right">
+                            <button class="button is-primary" type="submit">
+                                <span class="icon">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                                <span>Update</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-3">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Password</h1>
+                        <h2 class="subtitle">Change Account Password</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <form action="{{ 'account/change-password'|link }}" method="post">
+                        <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                        <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                        <div class="field">
+                            <lable class="label">Enter your current password</lable>
+                            <div class="control">
+                                <input class="input" name="current-password" type="password" placeholder="Current Password" minlength="6" maxlength="32" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <lable class="label">Enter your new password</lable>
+                            <div class="control">
+                                <input class="input" name="new-password" type="password" placeholder="New Password" minlength="6" maxlength="32" required />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <lable class="label">Confirm your new password</lable>
+                            <div class="control">
+                                <input class="input" name="new-password-confirm" type="password" placeholder="Confirm New Password" minlength="6" maxlength="32" required />
+                            </div>
+                        </div>
+                        <div class="field has-text-right">
+                            <button class="button is-primary" type="submit">
+                                <span class="icon">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                                <span>Change</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-3">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <div class="has-text-centered">
+                        <h1 class="title">Account</h1>
+                        <h2 class="subtitle">Delete Your Account</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <form action="{{ 'account/delete'|link }}" method="post">
+                        <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                        <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                        <div class="field">
+                            <lable class="label">Enter your current password</lable>
+                            <div class="control">
+                                <input class="input" name="current-password" type="password" placeholder="Current Password" minlength="6" maxlength="32" required />
+                            </div>
+                        </div>
+                        <div class="field has-text-right">
+                            <button class="button is-danger" type="submit">
+                                <span class="icon">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

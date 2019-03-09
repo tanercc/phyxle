@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller;
 
 use App\Controller\Common\CommonBase;
-use App\Model\Admin\AdminAccount;
+use App\Model\PublicAccount;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminAccounts extends CommonBase
+class PublicAccounts extends CommonBase
 {
     /**
      * Do login functions
@@ -21,7 +21,7 @@ class AdminAccounts extends CommonBase
     public function login(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->admin) {
+        if($this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -41,7 +41,7 @@ class AdminAccounts extends CommonBase
         $password = htmlspecialchars(trim($request->getParam('password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if email or password is invalid
-        $checkPassword = AdminAccount::where('email', $email)->value('password');
+        $checkPassword = PublicAccount::where('email', $email)->value('password');
 
         if(!password_verify($password, $checkPassword)) {
             $this->data['error'] = "Email or Password is Invalid";
@@ -49,24 +49,24 @@ class AdminAccounts extends CommonBase
         }
 
         // Set authentication cookie
-        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_admin_auth_token";
-        $cookieValue = AdminAccount::where('email', $email)->value('unique_id');
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_public_auth_token";
+        $cookieValue = PublicAccount::where('email', $email)->value('unique_id');
         $cookieExpires = strtotime('1 day');
         $cookiePath = "/";
 
         setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
 
         // Update database
-        $loggedCount = AdminAccount::where('email', $email)->value('logged_count') + 1;
+        $loggedCount = PublicAccount::where('email', $email)->value('logged_count') + 1;
 
-        AdminAccount::where('email', $email)->update([
+        PublicAccount::where('email', $email)->update([
             'reset_token' => null,
             'logged_count' => $loggedCount,
             'last_logged_at' => $this->time::now()
         ]);
 
         // Return response
-        return $response->withRedirect('/admin', 301);
+        return $response->withRedirect('/', 301);
     }
 
     /**
@@ -81,7 +81,7 @@ class AdminAccounts extends CommonBase
     public function register(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->admin) {
+        if($this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -90,8 +90,7 @@ class AdminAccounts extends CommonBase
             'username' => 'required|max:16',
             'email' => 'required|email|max:191',
             'password' => 'required|min:6|max:32',
-            'password-confirm' => 'required|min:6|max:32|same:password',
-            'app-key' => 'required|min:16|max:16'
+            'password-confirm' => 'required|min:6|max:32|same:password'
         ]);
 
         if($validation !== null) {
@@ -106,18 +105,10 @@ class AdminAccounts extends CommonBase
         $appKey = htmlspecialchars(trim($request->getParam('app-key')));
 
         // Check if email is already in use
-        $checkEmail = AdminAccount::where('email', $email)->first();
+        $checkEmail = PublicAccount::where('email', $email)->first();
 
         if($checkEmail !== null) {
             $this->data['error'] = "There is an Already Account Using That Email";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
-        }
-
-        // Check if app key is invalid
-        $checkAppKey = $this->container->get('settings')['app']['key'];
-
-        if($checkAppKey !== $appKey) {
-            $this->data['error'] = "Your App Key is Invalid";
             return $this->view($response->withStatus(400), 'common/templates/validation.twig');
         }
 
@@ -125,7 +116,7 @@ class AdminAccounts extends CommonBase
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
         if($hashMethod === 'bcrypt') {
-            AdminAccount::insert([
+            PublicAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
@@ -136,7 +127,7 @@ class AdminAccounts extends CommonBase
         }
 
         if($hashMethod === 'argon2i') {
-            AdminAccount::insert([
+            PublicAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
@@ -151,7 +142,7 @@ class AdminAccounts extends CommonBase
         }
 
         if($hashMethod === 'argon2id') {
-            AdminAccount::insert([
+            PublicAccount::insert([
                 'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
                 'username' => $username,
                 'email' => $email,
@@ -166,7 +157,7 @@ class AdminAccounts extends CommonBase
         }
 
         // Return response
-        return $response->withRedirect('/admin/account/login', 301);
+        return $response->withRedirect('/account/login', 301);
     }
 
     /**
@@ -181,12 +172,12 @@ class AdminAccounts extends CommonBase
     public function logout(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->admin) {
+        if(!$this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
         // Remove authentication cookie
-        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_admin_auth_token";
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_public_auth_token";
         $cookieValue = "logout";
         $cookieExpires = strtotime('now') - 1;
         $cookiePath = "/";
@@ -212,7 +203,7 @@ class AdminAccounts extends CommonBase
     public function forgotPassword(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->admin) {
+        if($this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -230,7 +221,7 @@ class AdminAccounts extends CommonBase
         $email = htmlspecialchars(trim($request->getParam('email')));
 
         // Check if email is invalid
-        $checkEmail = AdminAccount::where('email', $email)->first();
+        $checkEmail = PublicAccount::where('email', $email)->first();
 
         if($checkEmail === null) {
             $this->data['error'] = "There's No Account Using That Email";
@@ -248,11 +239,11 @@ class AdminAccounts extends CommonBase
             'from' => $appEmail,
             'to' => $email,
             'body' => '<p>Someone has requested to reset your password. If this was a mistake, ignore this email.</p>' .
-            '<a href="' . $appUrl . '/admin/account/reset-password?resetToken=' . $resetToken . '" target="_blank">Reset Password</a>'
+            '<a href="' . $appUrl . '/account/reset-password?token=' . $resetToken . '" target="_blank">Reset Password</a>'
         ]);
 
         // Update database
-        AdminAccount::where('email', $email)->update([
+        PublicAccount::where('email', $email)->update([
             'reset_token' => $resetToken
         ]);
 
@@ -275,7 +266,7 @@ class AdminAccounts extends CommonBase
     public function resetPassword(Request $request, Response $response, array $data)
     {
         // Check if authenticated
-        if($this->admin) {
+        if($this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -297,10 +288,10 @@ class AdminAccounts extends CommonBase
         $newPassword = htmlspecialchars(trim($request->getParam('new-password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if reset token is invalid
-        $checkResetToken = AdminAccount::where('email', $email)->value('reset_token');
+        $checkResetToken = PublicAccount::where('email', $email)->value('reset_token');
 
         if($resetToken !== $checkResetToken) {
-            AdminAccount::where('email', $email)->update([
+            PublicAccount::where('email', $email)->update([
                 'reset_token' => null
             ]);
 
@@ -312,13 +303,13 @@ class AdminAccounts extends CommonBase
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
         if($hashMethod === 'bcrypt') {
-            AdminAccount::where('email', $email)->update([
+            PublicAccount::where('email', $email)->update([
                 'password' => password_hash($newPassword, PASSWORD_BCRYPT)
             ]);
         }
 
         if($hashMethod === 'argon2i') {
-            AdminAccount::where('email', $email)->update([
+            PublicAccount::where('email', $email)->update([
                 'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
                     'memory_cost' => 2048,
                     'time_cost' => 4,
@@ -328,7 +319,7 @@ class AdminAccounts extends CommonBase
         }
 
         if($hashMethod === 'argon2id') {
-            AdminAccount::where('email', $email)->update([
+            PublicAccount::where('email', $email)->update([
                 'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
                     'memory_cost' => 2048,
                     'time_cost' => 4,
@@ -338,12 +329,12 @@ class AdminAccounts extends CommonBase
         }
 
         // Update database
-        AdminAccount::where('email', $email)->update([
+        PublicAccount::where('email', $email)->update([
             'reset_token' => null
         ]);
 
         // Return response
-        return $response->withRedirect('/admin/account/login', 301);
+        return $response->withRedirect('/account/login', 301);
     }
 
     /**
@@ -358,7 +349,7 @@ class AdminAccounts extends CommonBase
     public function updateDetails(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->admin) {
+        if(!$this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -380,8 +371,8 @@ class AdminAccounts extends CommonBase
         $currentPassword = htmlspecialchars(trim($request->getParam('current-password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if email is already in use
-        $id = $this->admin('id');
-        $checkId = AdminAccount::where('email', $email)->value('id');
+        $id = $this->public('id');
+        $checkId = PublicAccount::where('email', $email)->value('id');
 
         if($checkId !== null && $id !== $checkId) {
             $this->data['error'] = "That Email is Already Taken";
@@ -389,7 +380,7 @@ class AdminAccounts extends CommonBase
         }
 
         // Check if current password is invalid
-        $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
+        $checkCurrentPassword = PublicAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
             $this->data['error'] = "Current Password is Invalid";
@@ -397,13 +388,13 @@ class AdminAccounts extends CommonBase
         }
 
         // Update database
-        AdminAccount::where('id', $id)->update([
+        PublicAccount::where('id', $id)->update([
             'username' => $username,
             'email' => $email
         ]);
 
         // Return response
-        return $response->withRedirect('/admin/account', 301);
+        return $response->withRedirect('/account', 301);
     }
 
     /**
@@ -418,7 +409,7 @@ class AdminAccounts extends CommonBase
     public function changePassword(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->admin) {
+        if(!$this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -439,8 +430,8 @@ class AdminAccounts extends CommonBase
         $newPassword = htmlspecialchars(trim($request->getParam('new-password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if current password is invalid
-        $id = $this->admin('id');
-        $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
+        $id = $this->public('id');
+        $checkCurrentPassword = PublicAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
             $this->data['error'] = "Current Password is Invalid";
@@ -451,13 +442,13 @@ class AdminAccounts extends CommonBase
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
         if($hashMethod === 'bcrypt') {
-            AdminAccount::where('id', $id)->update([
+            PublicAccount::where('id', $id)->update([
                 'password' => password_hash($newPassword, PASSWORD_BCRYPT)
             ]);
         }
 
         if($hashMethod === 'argon2i') {
-            AdminAccount::where('id', $id)->update([
+            PublicAccount::where('id', $id)->update([
                 'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
                     'memory_cost' => 2048,
                     'time_cost' => 4,
@@ -467,7 +458,7 @@ class AdminAccounts extends CommonBase
         }
 
         if($hashMethod === 'argon2id') {
-            AdminAccount::where('id', $id)->update([
+            PublicAccount::where('id', $id)->update([
                 'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
                     'memory_cost' => 2048,
                     'time_cost' => 4,
@@ -477,7 +468,7 @@ class AdminAccounts extends CommonBase
         }
 
         // Return response
-        return $response->withRedirect('/admin/account', 301);
+        return $response->withRedirect('/account', 301);
     }
 
     /**
@@ -492,7 +483,7 @@ class AdminAccounts extends CommonBase
     public function delete(Request $request, Response $response, array $data)
     {
         // Check if not authenticated
-        if(!$this->admin) {
+        if(!$this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -510,8 +501,8 @@ class AdminAccounts extends CommonBase
         $currentPassword = htmlspecialchars(trim($request->getParam('current-password'))) . $this->container->get('settings')['app']['key'];
 
         // Check if current password is invalid
-        $id = $this->admin('id');
-        $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
+        $id = $this->public('id');
+        $checkCurrentPassword = PublicAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
             $this->data['error'] = "Current Password is Invalid";
@@ -519,10 +510,10 @@ class AdminAccounts extends CommonBase
         }
 
         // Update database
-        AdminAccount::where('id', $id)->delete();
+        PublicAccount::where('id', $id)->delete();
 
         // Remove authentication cookie
-        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_admin_auth_token";
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_public_auth_token";
         $cookieValue = "delete";
         $cookieExpires = strtotime('now') - 1;
         $cookiePath = "/";
@@ -530,7 +521,7 @@ class AdminAccounts extends CommonBase
         setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
 
         // Remove authentication session
-        unset($_SESSION['admin']);
+        unset($_SESSION['public']);
 
         // Return response
         return $response->withRedirect('/', 301);

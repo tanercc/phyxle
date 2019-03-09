@@ -39,7 +39,7 @@ class PublicAuth
         $database = $this->container->get('database');
 
         // Get cookie name and session name
-        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_public_auth_token";
         $sessionName = "public";
 
         // Get authentication cookie

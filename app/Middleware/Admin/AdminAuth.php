@@ -39,7 +39,7 @@ class AdminAuth
         $database = $this->container->get('database');
 
         // Get cookie name and session name
-        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_auth_token";
+        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_admin_auth_token";
         $sessionName = "admin";
 
         // Get authentication cookie

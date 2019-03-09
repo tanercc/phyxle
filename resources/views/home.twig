@@ -1,44 +1,50 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="{{ app.description }}" />
-		<meta name="keywords" content="{{ app.keywords }}" />
-		<meta name="author" content="{{ app.author }}" />
-        <link href="{{ 'css/bulma.css'|asset }}" rel="stylesheet" />
-        <link href="{{ 'css/fontawesome.css'|asset }}" rel="stylesheet" />
-        <link href="{{ 'images/favicon.png'|asset }}" rel="icon" type="image/png" />
-        <title>{{ app.name }} - Rapid, Slim Web</title>
-    </head>
-    <body>
-        <div class="hero is-fullheight">
-            <div class="hero-head">
-                <nav class="navbar">
-                    <div class="container is-fluid">
-                        <div class="navbar-brand">
-                            <a class="navbar-item" href="{{ ''|link }}">
-                                <h1 class="title">{{ app.name }}</h1>
-                            </a>
-                        </div>
-                    </div>
-                </nav>
+{% extends 'layouts/base.twig' %}
+
+{% set title = 'A Rapid, Slim Web' %}
+{% set id = 'home' %}
+
+{% block content %}
+<div class="has-text-centered">
+    <h1 class="title">{{ app.name }}</h1>
+    <h2 class="subtitle">Rapid, Slim Web</h2>
+    {% if auth.public.check %}
+        <div class="field is-grouped is-grouped-centered">
+            <div class="control">
+                <a class="button is-primary" href="{{ 'account'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <span>Account</span>
+                </a>
             </div>
-            <div class="hero-body">
-                <div class="container is-fluid">
-                    <div class="has-text-centered">
-                        <h1 class="title">{{ app.name }}</h1>
-                        <h2 class="subtitle">Rapid, Slim Web</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-foot">
-                <div class="container is-fluid">
-                    <div class="has-text-centered">
-                        <p class="has-padding-bottom-5">Copyright &copy; {{ 'now'|date('Y') }} {{ app.name }}</p>
-                    </div>
-                </div>
+            <div class="control">
+                <a class="button is-danger" href="{{ 'account/logout'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </span>
+                    <span>Logout</span>
+                </a>
             </div>
         </div>
-    </body>
-</html>
+    {% else %}
+        <div class="field is-grouped is-grouped-centered">
+            <div class="control">
+                <a class="button is-primary" href="{{ 'account/login'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </span>
+                    <span>Login</span>
+                </a>
+            </div>
+            <div class="control">
+                <a class="button is-danger" href="{{ 'account/register'|link }}">
+                    <span class="icon">
+                        <i class="fas fa-user-plus"></i>
+                    </span>
+                    <span>Register</span>
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

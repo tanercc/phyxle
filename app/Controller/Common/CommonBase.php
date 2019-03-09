@@ -17,6 +17,9 @@ class CommonBase
     // Check authenticated as admin or not
     protected $admin;
 
+    // Check authenticated as public or not
+    protected $public;
+
     // Pass Carbon package to child controllers
     protected $time;
 
@@ -37,6 +40,9 @@ class CommonBase
 
         // Get if authenticated as admin or not
         $this->admin = (isset($_SESSION['admin']) ? true : false);
+
+        // Get if authenticated as public or not
+        $this->public = (isset($_SESSION['public']) ? true : false);
 
         // Get Carbon object from container
         $this->time = $container->get('time');
@@ -144,6 +150,21 @@ class CommonBase
         // Check if authenticated
         if($this->admin) {
             return $_SESSION['admin'][$key];
+        }
+    }
+
+    /**
+     * Get authenticated public details
+     *
+     * @param string $key Auth session variable
+     *
+     * @return string|void
+     */
+    protected function public(string $key)
+    {
+        // Check if authenticated
+        if($this->public) {
+            return $_SESSION['public'][$key];
         }
     }
 }

@@ -86,18 +86,18 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
                     'check' => (isset($_SESSION['public'])) ? true : false,
 
                     // Authenticated admin's username
-                    'username' => (isset($_SESSION['public'])) ? $_SESSION['admin']['username'] : null,
+                    'username' => (isset($_SESSION['public'])) ? $_SESSION['public']['username'] : null,
 
                     // Authenticated admin's email
-                    'email' => (isset($_SESSION['public'])) ? $_SESSION['admin']['email'] : null,
+                    'email' => (isset($_SESSION['public'])) ? $_SESSION['public']['email'] : null,
 
                     // Auth login array
                     'login' => [
                         // Authenticated admin's last login timestamp
-                        'last' => (isset($_SESSION['public'])) ? $_SESSION['admin']['lastLogin'] : null,
+                        'last' => (isset($_SESSION['public'])) ? $_SESSION['public']['lastLogin'] : null,
 
                         // Authenticated user's login count
-                        'count' => (isset($_SESSION['public'])) ? $_SESSION['admin']['loginCount'] : null
+                        'count' => (isset($_SESSION['public'])) ? $_SESSION['public']['loginCount'] : null
                     ]
                 ]
             ],

@@ -51,6 +51,28 @@ ALTER TABLE `admin_accounts`
     MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ```
 ```sql
+CREATE TABLE `public_accounts` (
+    `id` int(11) NOT NULL,
+    `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `logged_count` int(11) NOT NULL DEFAULT 0,
+    `last_logged_at` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `created_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `updated_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
+
+ALTER TABLE `public_accounts`
+    ADD PRIMARY KEY (`id`),
+    ADD UNIQUE KEY `unique_id` (`unique_id`),
+    ADD UNIQUE KEY `email` (`email`);
+
+ALTER TABLE `public_accounts`
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+```
+```sql
 CREATE TABLE `admin_media` (
     `id` int(11) NOT NULL,
     `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
