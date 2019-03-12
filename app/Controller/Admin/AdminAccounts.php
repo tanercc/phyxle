@@ -25,6 +25,11 @@ class AdminAccounts extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
+        // Check if request method is GET
+        if($request->isGet()) {
+            return $this->view($response, 'admin/account_login.twig');
+        }
+
         // Check if input validation is failed
         $validation = $this->validator($request, [
             'email' => 'required|email|max:191',
@@ -66,7 +71,7 @@ class AdminAccounts extends CommonBase
         ]);
 
         // Return response
-        return $response->withRedirect('/admin', 301);
+        return $response->withRedirect('/admin');
     }
 
     /**
@@ -83,6 +88,11 @@ class AdminAccounts extends CommonBase
         // Check if authenticated
         if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if request method is GET
+        if($request->isGet()) {
+            return $this->view($response, 'admin/account_register.twig');
         }
 
         // Check if input validation is failed
@@ -166,7 +176,7 @@ class AdminAccounts extends CommonBase
         }
 
         // Return response
-        return $response->withRedirect('/admin/account/login', 301);
+        return $response->withRedirect('/admin/account/login');
     }
 
     /**
@@ -185,6 +195,11 @@ class AdminAccounts extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
+        // Check if request method is GET
+        if($request->isGet()) {
+            return $this->view($response, 'admin/account_logout.twig');
+        }
+
         // Remove authentication cookie
         $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_admin_auth_token";
         $cookieValue = "logout";
@@ -197,11 +212,11 @@ class AdminAccounts extends CommonBase
         unset($_SESSION['admin']);
 
         // Return response
-        return $response->withRedirect('/', 301);
+        return $response->withRedirect('/');
     }
 
     /**
-     * Send password reset mail
+     * Do forgot password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -214,6 +229,11 @@ class AdminAccounts extends CommonBase
         // Check if authenticated
         if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if request method is GET
+        if($request->isGet()) {
+            return $this->view($response, 'admin/account_forgot_password.twig');
         }
 
         // Check if input validation is failed
@@ -265,7 +285,7 @@ class AdminAccounts extends CommonBase
     }
 
     /**
-     * Reset forgotten password
+     * Do reset password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -278,6 +298,15 @@ class AdminAccounts extends CommonBase
         // Check if authenticated
         if($this->admin) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if request method is GET
+        if($request->isGet()) {
+            // Get token
+            $this->data['token'] = $request->getQueryParam('token');
+
+            // Return response
+            return $this->view($response, 'admin/account_reset_password.twig');
         }
 
         // Check if input validation is failed
@@ -344,7 +373,7 @@ class AdminAccounts extends CommonBase
         ]);
 
         // Return response
-        return $response->withRedirect('/admin/account/login', 301);
+        return $response->withRedirect('/admin/account/login');
     }
 
     /**
@@ -404,7 +433,7 @@ class AdminAccounts extends CommonBase
         ]);
 
         // Return response
-        return $response->withRedirect('/admin/account', 301);
+        return $response->withRedirect('/admin/account');
     }
 
     /**
@@ -478,7 +507,7 @@ class AdminAccounts extends CommonBase
         }
 
         // Return response
-        return $response->withRedirect('/admin/account', 301);
+        return $response->withRedirect('/admin/account');
     }
 
     /**
@@ -534,6 +563,6 @@ class AdminAccounts extends CommonBase
         unset($_SESSION['admin']);
 
         // Return response
-        return $response->withRedirect('/', 301);
+        return $response->withRedirect('/');
     }
 }

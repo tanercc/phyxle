@@ -101,7 +101,7 @@ class AdminMedia extends CommonBase
             ]);
 
             // Return response
-            return $response->withRedirect('/admin/media', 301);
+            return $response->withRedirect('/admin/media');
         }
     }
 
@@ -160,7 +160,7 @@ class AdminMedia extends CommonBase
         ]);
 
         // Return response
-        return $response->withRedirect('/admin/media', 301);
+        return $response->withRedirect('/admin/media');
     }
 
     /**
@@ -204,6 +204,6 @@ class AdminMedia extends CommonBase
         AdminMedium::where('id', $id)->delete();
 
         // Return response
-        return $response->withRedirect('/admin/media', 301);
+        return $response->withRedirect('/admin/media');
     }
 }

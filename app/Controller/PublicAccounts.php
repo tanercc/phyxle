@@ -25,6 +25,11 @@ class PublicAccounts extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
+        // Check if request method is GET
+        if($request->isGet()) {
+            return $this->view($response, 'account_login.twig');
+        }
+
         // Check if input validation is failed
         $validation = $this->validator($request, [
             'email' => 'required|email|max:191',
@@ -74,7 +79,7 @@ class PublicAccounts extends CommonBase
         ]);
 
         // Return response
-        return $response->withRedirect('/', 301);
+        return $response->withRedirect('/');
     }
 
     /**
@@ -91,6 +96,11 @@ class PublicAccounts extends CommonBase
         // Check if authenticated
         if($this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if request method is GET
+        if($request->isGet()) {
+            return $this->view($response, 'account_register.twig');
         }
 
         // Check if input validation is failed
@@ -243,6 +253,11 @@ class PublicAccounts extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
+        // Check if request method is GET
+        if($request->isGet()) {
+            return $this->view($response, 'account_logout.twig');
+        }
+
         // Remove authentication cookie
         $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_public_auth_token";
         $cookieValue = "logout";
@@ -255,11 +270,11 @@ class PublicAccounts extends CommonBase
         unset($_SESSION['admin']);
 
         // Return response
-        return $response->withRedirect('/', 301);
+        return $response->withRedirect('/');
     }
 
     /**
-     * Send password reset mail
+     * Do forgot password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -272,6 +287,11 @@ class PublicAccounts extends CommonBase
         // Check if authenticated
         if($this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if request method is GET
+        if($request->isGet()) {
+            return $this->view($response, 'account_forgot_password.twig');
         }
 
         // Check if input validation is failed
@@ -323,7 +343,7 @@ class PublicAccounts extends CommonBase
     }
 
     /**
-     * Reset forgotten password
+     * Do reset password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -336,6 +356,15 @@ class PublicAccounts extends CommonBase
         // Check if authenticated
         if($this->public) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Check if request method is GET
+        if($request->isGet()) {
+            // Get token
+            $this->data['token'] = $request->getQueryParam('token');
+
+            // Return response
+            return $this->view($response, 'account_reset_password.twig');
         }
 
         // Check if input validation is failed
@@ -402,7 +431,7 @@ class PublicAccounts extends CommonBase
         ]);
 
         // Return response
-        return $response->withRedirect('/account/login', 301);
+        return $response->withRedirect('/account/login');
     }
 
     /**
@@ -462,7 +491,7 @@ class PublicAccounts extends CommonBase
         ]);
 
         // Return response
-        return $response->withRedirect('/account', 301);
+        return $response->withRedirect('/account');
     }
 
     /**
@@ -536,7 +565,7 @@ class PublicAccounts extends CommonBase
         }
 
         // Return response
-        return $response->withRedirect('/account', 301);
+        return $response->withRedirect('/account');
     }
 
     /**
@@ -592,6 +621,6 @@ class PublicAccounts extends CommonBase
         unset($_SESSION['public']);
 
         // Return response
-        return $response->withRedirect('/', 301);
+        return $response->withRedirect('/');
     }
 }
