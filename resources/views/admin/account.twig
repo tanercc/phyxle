@@ -133,7 +133,7 @@
                                     <span>Backend Users</span>
                                 </th>
                                 <td class="has-text-right">
-                                    {{ accounts|length }}
+                                    {{ accounts.all|length }}
                                 </td>
                             </tr>
                         </tbody>
@@ -255,20 +255,79 @@
                                 </th>
                                 <th class="has-text-right">
                                     <span class="icon">
-                                        <i class="fas fa-clock"></i>
+                                        <i class="fas fa-cog"></i>
                                     </span>
-                                    <span>Created At</span>
+                                    <span>Manage</span>
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for account in accounts %}
+                            {% for account in accounts.filtered %}
                                 <tr>
                                     <td class="has-text-left">
-                                        {{ account.username }}
+                                        <span>{{ account.username }}</span>
+                                        {% if account.activated == 0 %}
+                                            <span class="tag is-danger">Deactivated</span>
+                                        {% endif %}
                                     </td>
                                     <td class="has-text-right">
-                                        {{ account.created_at|date('d/m/Y g:i a') }}
+                                        {% if account.activated == 0 %}
+                                            {% if auth.admin.id == 1 %}
+                                                <form class="is-inline-block" action="{{ 'admin/account/activate'|link }}" method="post">
+                                                    <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                                                    <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                                                    <input name="id" type="hidden" value="{{ account.id }}" />
+                                                    <button class="button is-primary" type="submit">
+                                                        <span class="icon">
+                                                            <i class="fas fa-check"></i>
+                                                        </span>
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <button class="button is-primary" disabled>
+                                                    <span class="icon">
+                                                        <i class="fas fa-check"></i>
+                                                    </span>
+                                                </button>
+                                            {% endif %}
+                                        {% else %}
+                                            {% if auth.admin.id == 1 %}
+                                                <form class="is-inline-block" action="{{ 'admin/account/deactivate'|link }}" method="post">
+                                                    <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                                                    <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                                                    <input name="id" type="hidden" value="{{ account.id }}" />
+                                                    <button class="button is-danger" type="submit">
+                                                        <span class="icon">
+                                                            <i class="fas fa-ban"></i>
+                                                        </span>
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <button class="button is-danger" disabled>
+                                                    <span class="icon">
+                                                        <i class="fas fa-ban"></i>
+                                                    </span>
+                                                </button>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if auth.admin.id == 1 %}
+                                            <form class="is-inline-block">
+                                                <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
+                                                <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
+                                                <input name="id" type="hidden" value="{{ account.id }}" />
+                                                <button class="button is-danger" type="submit">
+                                                    <span class="icon">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </span>
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <button class="button is-danger" disabled>
+                                                <span class="icon">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </span>
+                                            </button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

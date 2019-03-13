@@ -53,6 +53,14 @@ class AdminAccounts extends CommonBase
             return $this->view($response->withStatus(400), 'common/templates/validation.twig');
         }
 
+        // Check if account is not activated
+        $checkActivate = AdminAccount::where('email', $email)->value('activated');
+
+        if($checkActivate === 0) {
+            $this->data['error'] = "Your Account is Deactivated";
+            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+        }
+
         // Set authentication cookie
         $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_admin_auth_token";
         $cookieValue = AdminAccount::where('email', $email)->value('unique_id');
@@ -177,6 +185,62 @@ class AdminAccounts extends CommonBase
 
         // Return response
         return $response->withRedirect('/admin/account/login');
+    }
+
+    /**
+     * Do activate functions
+     *
+     * @param Request  $request  PSR-7 request object
+     * @param Response $response PSR-7 response object
+     * @param array    $data     URL parameters
+     *
+     * @return Response
+     */
+    public function activate(Request $request, Response $response, array $data)
+    {
+        // Check if not authenticated or not authenticated as super admin
+        if(!$this->admin || $this->admin('id') !== 1) {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Get account ID
+        $id = htmlspecialchars(trim($request->getParam('id')));
+
+        // Update database
+        AdminAccount::where('id', $id)->update([
+            'activated' => 1
+        ]);
+
+        // Return response
+        return $response->withRedirect('/admin/account');
+    }
+
+    /**
+     * Do deactivate functions
+     *
+     * @param Request  $request  PSR-7 request object
+     * @param Response $response PSR-7 response object
+     * @param array    $data     URL parameters
+     *
+     * @return Response
+     */
+    public function deactivate(Request $request, Response $response, array $data)
+    {
+        // Check if not authenticated or not authenticated as super admin
+        if(!$this->admin || $this->admin('id') !== 1) {
+            return $this->view($response->withStatus(403), 'common/errors/403.twig');
+        }
+
+        // Get account ID
+        $id = htmlspecialchars(trim($request->getParam('id')));
+
+        // Update database
+        AdminAccount::where('id', $id)->update([
+            'activated' => 0
+        ]);
+
+        // Return response
+        return $response->withRedirect('/admin/account');
     }
 
     /**

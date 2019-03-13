@@ -31,6 +31,8 @@ $app->get('/admin/account/login', AdminAccounts::class . ':login');
 $app->post('/admin/account/login', AdminAccounts::class . ':login');
 $app->get('/admin/account/register', AdminAccounts::class . ':register');
 $app->post('/admin/account/register', AdminAccounts::class . ':register');
+$app->post('/admin/account/activate', AdminAccounts::class . ':activate');
+$app->post('/admin/account/deactivate', AdminAccounts::class . ':deactivate');
 $app->get('/admin/account/logout', AdminAccounts::class . ':logout');
 $app->post('/admin/account/logout', AdminAccounts::class . ':logout');
 $app->get('/admin/account/forgot-password', AdminAccounts::class . ':forgotPassword');

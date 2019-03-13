@@ -50,7 +50,8 @@ class AdminPages extends CommonBase
         }
 
         // Set Twig data
-        $this->data['accounts'] = AdminAccount::orderBy('logged_count', 'desc')->get();
+        $this->data['accounts']['filtered'] = AdminAccount::where('id', '!=', $this->admin('id'))->where('id', '!=', 1)->orderBy('activated', 'desc')->get();
+        $this->data['accounts']['all'] = AdminAccount::all();
 
         // Return response
         return $this->view($response, 'admin/account.twig');

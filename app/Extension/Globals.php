@@ -64,6 +64,9 @@ class Globals extends Twig_Extension implements Twig_Extension_GlobalsInterface
                     // Check if authenticated or not
                     'check' => (isset($_SESSION['admin'])) ? true : false,
 
+                    // Authenticated admin's ID
+                    'id' => (isset($_SESSION['admin'])) ? $_SESSION['admin']['id'] : null,
+
                     // Authenticated admin's username
                     'username' => (isset($_SESSION['admin'])) ? $_SESSION['admin']['username'] : null,
 
