@@ -72,6 +72,24 @@ class AdminAuth
             return $next($request, $response);
         }
 
+        // Get account activation status
+        $activated = $database->table('admin_accounts')->where('unique_id', $cookie)->value('activated');
+
+        // Check if account is not activated
+        if($activated === 0) {
+            // Remove authentication cookie
+            $cookieValue = "invalid";
+            $cookieExpires = strtotime('now') - 1;
+
+            setcookie($cookieName, $cookieValue, $cookieExpires);
+
+            // Remove authentication session
+            unset($_SESSION[$sessionName]);
+
+            // Return next middleware
+            return $next($request, $response);
+        }
+
         // Get authenticated user details
         $id = $database->table('admin_accounts')->where('unique_id', $cookie)->value('id');
         $username = $database->table('admin_accounts')->where('unique_id', $cookie)->value('username');
