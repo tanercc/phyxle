@@ -316,6 +316,19 @@
                                         {% endif %}
                                     </td>
                                 </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="has-text-centered has-margin-top-20">
+                                            <h1 class="title is-5">
+                                                <span class="icon">
+                                                    <i class="far fa-frown"></i>
+                                                </span>
+                                                <span class="has-padding-left-5">No Accounts Found</span>
+                                            </h1>
+                                        </div>
+                                    </td>
+                                </tr>
                             {% endfor %}
                         </tbody>
                     </table>
