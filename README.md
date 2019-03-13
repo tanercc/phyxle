@@ -31,6 +31,7 @@ Basic configurations can be found at `.env` file and all configurations can be f
 ```sql
 CREATE TABLE `admin_accounts` (
     `id` int(11) NOT NULL,
+    `activated` tinyint(1) NOT NULL DEFAULT 0,
     `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `username` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
