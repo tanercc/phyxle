@@ -25,7 +25,7 @@
             </div>
             <div class="columns">
                 <div class="column">
-                    <form action="{{ 'account/update-details'|link }}" method="post">
+                    <form action="{{ '/account/update-details'|link }}" method="post">
                         <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
                         <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
                         <div class="field">
@@ -71,7 +71,7 @@
             </div>
             <div class="columns">
                 <div class="column">
-                    <form action="{{ 'account/change-password'|link }}" method="post">
+                    <form action="{{ '/account/change-password'|link }}" method="post">
                         <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
                         <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
                         <div class="field">
@@ -117,7 +117,7 @@
             </div>
             <div class="columns">
                 <div class="column">
-                    <form action="{{ 'account/delete'|link }}" method="post">
+                    <form action="{{ '/account/delete'|link }}" method="post">
                         <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
                         <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
                         <div class="field">

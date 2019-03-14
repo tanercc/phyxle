@@ -16,7 +16,7 @@ class Filters extends Twig_Extension
      * Filters extension constructor
      *
      * @param Container $container PSR-11 container object
-     * 
+     *
      * @return void
      */
     public function __construct(Container $container)
@@ -136,6 +136,6 @@ class Filters extends Twig_Extension
     public function link(string $path)
     {
         // Return URL
-        return $this->container->get('settings')['app']['url'] . "/" . $path;
+        return $this->container->get('settings')['app']['url'] . $path;
     }
 }

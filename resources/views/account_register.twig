@@ -17,7 +17,7 @@
             </div>
             <div class="columns">
                 <div class="column">
-                    <form action="{{ 'account/register'|link }}" method="post">
+                    <form action="{{ '/account/register'|link }}" method="post">
                         <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
                         <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
                         <div class="field">
@@ -48,7 +48,7 @@
                             <div class="columns is-vcentered">
                                 <div class="column">
                                     <div class="has-text-left">
-                                        <a class="has-text-dark" href="{{ 'account/forgot-password'|link }}">Forgot Password</a>
+                                        <a class="has-text-dark" href="{{ '/account/forgot-password'|link }}">Forgot Password</a>
                                     </div>
                                 </div>
                                 <div class="column">

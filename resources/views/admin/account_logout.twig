@@ -17,7 +17,7 @@
             </div>
             <div class="columns">
                 <div class="column">
-                    <form action="{{ 'admin/account/logout'|link }}" method="post">
+                    <form action="{{ '/admin/account/logout'|link }}" method="post">
                         <input name="{{ csrf.name.key }}" type="hidden" value="{{ csrf.name.value }}" />
                         <input name="{{ csrf.token.key }}" type="hidden" value="{{ csrf.token.value }}" />
                         <div class="field is-grouped is-grouped-centered">
@@ -30,7 +30,7 @@
                                 </button>
                             </div>
                             <div class="control">
-                                <a class="button is-danger" href="{{ 'admin'|link }}">
+                                <a class="button is-danger" href="{{ '/admin'|link }}">
                                     <span class="icon">
                                         <i class="fas fa-times"></i>
                                     </span>

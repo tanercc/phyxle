@@ -10,7 +10,7 @@
     {% if auth.public.check %}
         <div class="field is-grouped is-grouped-centered">
             <div class="control">
-                <a class="button is-primary" href="{{ 'account'|link }}">
+                <a class="button is-primary" href="{{ '/account'|link }}">
                     <span class="icon">
                         <i class="fas fa-user"></i>
                     </span>
@@ -18,7 +18,7 @@
                 </a>
             </div>
             <div class="control">
-                <a class="button is-danger" href="{{ 'account/logout'|link }}">
+                <a class="button is-danger" href="{{ '/account/logout'|link }}">
                     <span class="icon">
                         <i class="fas fa-sign-out-alt"></i>
                     </span>
@@ -29,7 +29,7 @@
     {% else %}
         <div class="field is-grouped is-grouped-centered">
             <div class="control">
-                <a class="button is-primary" href="{{ 'account/login'|link }}">
+                <a class="button is-primary" href="{{ '/account/login'|link }}">
                     <span class="icon">
                         <i class="fas fa-sign-in-alt"></i>
                     </span>
@@ -37,7 +37,7 @@
                 </a>
             </div>
             <div class="control">
-                <a class="button is-danger" href="{{ 'account/register'|link }}">
+                <a class="button is-danger" href="{{ '/account/register'|link }}">
                     <span class="icon">
                         <i class="fas fa-user-plus"></i>
                     </span>
