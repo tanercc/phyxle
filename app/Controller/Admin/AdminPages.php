@@ -29,7 +29,7 @@ class AdminPages extends CommonBase
         // Set Twig data
         $this->data['accounts'] = AdminAccount::all();
 
-        // Return response
+        // Return homepage
         return $this->view($response, 'admin/home.twig');
     }
 
@@ -50,10 +50,14 @@ class AdminPages extends CommonBase
         }
 
         // Set Twig data
-        $this->data['accounts']['filtered'] = AdminAccount::where('id', '!=', $this->admin('id'))->where('id', '!=', 1)->orderBy('logged_count', 'desc')->get();
-        $this->data['accounts']['all'] = AdminAccount::all();
+        $this->data = [
+            'accounts' => [
+                'all' => AdminAccount::all(),
+                'filtered' => AdminAccount::where('id', '!=', $this->admin('id'))->where('id', '!=', 1)->orderBy('logged_count', 'desc')->get()
+            ]
+        ];
 
-        // Return response
+        // Return account page
         return $this->view($response, 'admin/account.twig');
     }
 
@@ -76,7 +80,7 @@ class AdminPages extends CommonBase
         // Set Twig data
         $this->data['media'] = AdminMedium::orderBy('name', 'asc')->get();
 
-        // Return response
+        // Return media page
         return $this->view($response, 'admin/media.twig');
     }
 }

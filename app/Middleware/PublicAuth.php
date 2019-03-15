@@ -12,7 +12,7 @@ class PublicAuth
     private $container;
 
     /**
-     * PublicAuth middleware constructor
+     * Public auth middleware constructor
      *
      * @param Container $container PSR-11 container object
      *
@@ -25,7 +25,7 @@ class PublicAuth
     }
 
     /**
-     * PublicAuth middleware invoker
+     * Public auth middleware invoker
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object

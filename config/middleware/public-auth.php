@@ -4,7 +4,7 @@ use App\Middleware\PublicAuth;
 use Slim\Container;
 
 // Public auth container
-$container['publicAuth'] = function(Container $container) {
+$container['public-auth'] = function(Container $container) {
     // Create public auth middleware object
     $publicAuth = new PublicAuth($container);
 

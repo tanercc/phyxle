@@ -10,7 +10,7 @@ use Slim\Http\Response;
 class PublicAccounts extends CommonBase
 {
     /**
-     * Do login functions
+     * Login functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -30,15 +30,19 @@ class PublicAccounts extends CommonBase
             return $this->view($response, 'account_login.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'email' => 'required|email|max:191',
             'password' => 'required|min:6|max:32'
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -49,16 +53,24 @@ class PublicAccounts extends CommonBase
         $checkPassword = PublicAccount::where('email', $email)->value('password');
 
         if(!password_verify($password, $checkPassword)) {
-            $this->data['error'] = "Email or Password is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Email or Password is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Check if account is not activated
         $checkActivate = PublicAccount::where('email', $email)->value('activation_token');
 
         if($checkActivate !== null) {
-            $this->data['error'] = "You Must Activate Your Account First";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Account is Not Activated Yet',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Set authentication cookie
@@ -69,21 +81,23 @@ class PublicAccounts extends CommonBase
 
         setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
 
-        // Update database
+        // Get logged count
         $loggedCount = PublicAccount::where('email', $email)->value('logged_count') + 1;
 
+        // Update reset token, logged count and last logged at columns in public
+        // accounts table
         PublicAccount::where('email', $email)->update([
             'reset_token' => null,
             'logged_count' => $loggedCount,
             'last_logged_at' => $this->time::now()
         ]);
 
-        // Return response
+        // Redirect to / route
         return $response->withRedirect('/');
     }
 
     /**
-     * Do register functions
+     * Register functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -103,7 +117,7 @@ class PublicAccounts extends CommonBase
             return $this->view($response, 'account_register.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'username' => 'required|max:16',
             'email' => 'required|email|max:191',
@@ -112,8 +126,12 @@ class PublicAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -126,80 +144,97 @@ class PublicAccounts extends CommonBase
         $checkEmail = PublicAccount::where('email', $email)->first();
 
         if($checkEmail !== null) {
-            $this->data['error'] = "There is an Already Account Using That Email";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'There is an Account Already Using That Email',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Get password hash method and activation token
         $hashMethod = $this->container->get('settings')['app']['hash'];
         $activationToken = bin2hex(random_bytes(32));
 
-        if($hashMethod === 'bcrypt') {
-            PublicAccount::insert([
-                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
-                'activation_token' => $activationToken,
-                'username' => $username,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_BCRYPT),
-                'created_at' => $this->time::now(),
-                'updated_at' => $this->time::now()
-            ]);
-        }
+        // Update unique ID, activation token, username, email, password,
+        // created at and updated at columns in public accounts table
+        switch($hashMethod) {
+            case 'bcrypt':
+                PublicAccount::insert([
+                    'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
+                    'activation_token' => $activationToken,
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => password_hash($password, PASSWORD_BCRYPT),
+                    'created_at' => $this->time::now(),
+                    'updated_at' => $this->time::now()
+                ]);
 
-        if($hashMethod === 'argon2i') {
-            PublicAccount::insert([
-                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
-                'activation_token' => $activationToken,
-                'username' => $username,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_ARGON2I, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ]),
-                'created_at' => $this->time::now(),
-                'updated_at' => $this->time::now()
-            ]);
-        }
+                break;
 
-        if($hashMethod === 'argon2id') {
-            PublicAccount::insert([
-                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
-                'activation_token' => $activationToken,
-                'username' => $username,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_ARGON2ID, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ]),
-                'created_at' => $this->time::now(),
-                'updated_at' => $this->time::now()
-            ]);
-        }
+            case 'argon2i':
+                PublicAccount::insert([
+                    'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
+                    'activation_token' => $activationToken,
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => password_hash($password, PASSWORD_ARGON2I, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ]),
+                    'created_at' => $this->time::now(),
+                    'updated_at' => $this->time::now()
+                ]);
+
+                break;
+
+            case 'argon2id':
+                PublicAccount::insert([
+                    'unique_id' => md5(bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key']),
+                    'activation_token' => $activationToken,
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => password_hash($password, PASSWORD_ARGON2ID, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ]),
+                    'created_at' => $this->time::now(),
+                    'updated_at' => $this->time::now()
+                ]);
+
+                break;
+
+            default:
+                $this->data = [
+                    'title' => 'Password Hash Method is Not Defined',
+                    'subtitle' => 'HTTP Status Code: 400'
+                ];
+
+                return $this->view($response->withStatus(400), 'common/templates/message.twig');
+            }
 
         // Send account activation email
-        $appName = $this->container->get('settings')['app']['name'];
-        $appUrl = $this->container->get('settings')['app']['url'];
-        $appEmail = $this->container->get('settings')['app']['email'];
-
         $this->mail([
-            'subject' => ucfirst($appName) . ' - Account Activation',
-            'from' => $appEmail,
+            'subject' => ucfirst($this->container->get('settings')['app']['name']) . ' - Account Activation',
+            'from' => $this->container->get('settings')['app']['email'],
             'to' => $email,
-            'body' => '<p>Hello ' . $username . '. Your account has been created. Click below link to activate account.</p>' .
-            '<a href="' . $appUrl . '/account/activate?token=' . $activationToken . '" target="_blank">Activate Account</a>'
+            'body' => '<p>Hello ' . $username . '! Your account has been created. Click below link to activate account.</p>' .
+            '<a href="' . $this->container->get('settings')['app']['url'] . '/account/activate?token=' . $activationToken . '" target="_blank">Activate Account</a>'
         ]);
 
-        // Return response
-        $this->data['title'] = "Check Your Email";
-        $this->data['subtitle'] = "Account Activation Email Has Been Sent";
+        // Return message page
+        $this->data = [
+            'title' => 'Check Your Email',
+            'subtitle' => 'Account Activation Mail Has Been Sent'
+        ];
 
         return $this->view($response, 'common/templates/message.twig');
     }
 
     /**
-     * Activate account
+     * Activate functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -221,24 +256,30 @@ class PublicAccounts extends CommonBase
         $checkActivationToken = PublicAccount::where('activation_token', $activationToken)->first();
 
         if($checkActivationToken === null) {
-            $this->data['error'] = "Activation Token is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Activation Token is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Update activation token column in public accounts table
         PublicAccount::where('activation_token', $activationToken)->update([
             'activation_token' => null
         ]);
 
-        // Return response
-        $this->data['title'] = "Account Activated";
-        $this->data['subtitle'] = "Now You Can Login to Your Account";
+        // Return message page
+        $this->data = [
+            'title' => 'Account Activated',
+            'subtitle' => 'Now You Can Login to Your Account'
+        ];
 
         return $this->view($response, 'common/templates/message.twig');
     }
 
     /**
-     * Do logout functions
+     * Logout functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -269,12 +310,12 @@ class PublicAccounts extends CommonBase
         // Remove authentication session
         unset($_SESSION['admin']);
 
-        // Return response
+        // Redirect to / route
         return $response->withRedirect('/');
     }
 
     /**
-     * Do forgot password functions
+     * Forgot password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -294,14 +335,18 @@ class PublicAccounts extends CommonBase
             return $this->view($response, 'account_forgot_password.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'email' => 'required|email|max:191'
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -311,39 +356,42 @@ class PublicAccounts extends CommonBase
         $checkEmail = PublicAccount::where('email', $email)->first();
 
         if($checkEmail === null) {
-            $this->data['error'] = "There's No Account Using That Email";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'There is No Account Using That Email',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Get reset token
         $resetToken = bin2hex(random_bytes(32));
 
+        // Update reset token column in public accounts table
         PublicAccount::where('email', $email)->update([
             'reset_token' => $resetToken
         ]);
 
         // Send password reset email
-        $appName = $this->container->get('settings')['app']['name'];
-        $appUrl = $this->container->get('settings')['app']['url'];
-        $appEmail = $this->container->get('settings')['app']['email'];
-
         $this->mail([
-            'subject' => ucfirst($appName) . ' - Reset Password',
-            'from' => $appEmail,
+            'subject' => ucfirst($this->container->get('settings')['app']['name']) . ' - Reset Password',
+            'from' => $this->container->get('settings')['app']['email'],
             'to' => $email,
             'body' => '<p>Someone has requested to reset your password. If this was a mistake, ignore this email.</p>' .
-            '<a href="' . $appUrl . '/account/reset-password?token=' . $resetToken . '" target="_blank">Reset Password</a>'
+            '<a href="' . $this->container->get('settings')['app']['url'] . '/account/reset-password?token=' . $resetToken . '" target="_blank">Reset Password</a>'
         ]);
 
-        // Return response
-        $this->data['title'] = "Check Your Email";
-        $this->data['subtitle'] = "Password Reset Email Has Been Sent";
+        // Return message page
+        $this->data = [
+            'title' => 'Check Your Email',
+            'subtitle' => 'Password Reset Email Has Been Sent'
+        ];
 
         return $this->view($response, 'common/templates/message.twig');
     }
 
     /**
-     * Do reset password functions
+     * Reset password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -360,14 +408,12 @@ class PublicAccounts extends CommonBase
 
         // Check if request method is GET
         if($request->isGet()) {
-            // Get token
             $this->data['token'] = $request->getQueryParam('token');
 
-            // Return response
             return $this->view($response, 'account_reset_password.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'email' => 'required|email|max:191',
             'new-password' => 'required|min:6|max:32',
@@ -375,8 +421,12 @@ class PublicAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -392,50 +442,66 @@ class PublicAccounts extends CommonBase
                 'reset_token' => null
             ]);
 
-            $this->data['error'] = "Your Reset Token is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Reset Token is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Reset password
+        // Get password hash method
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
-        if($hashMethod === 'bcrypt') {
-            PublicAccount::where('email', $email)->update([
-                'password' => password_hash($newPassword, PASSWORD_BCRYPT)
-            ]);
+        // Update reset token and password columns in public accounts table
+        switch($hashMethod) {
+            case 'bcrypt':
+                PublicAccount::where('email', $email)->update([
+                    'reset_token' => null,
+                    'password' => password_hash($newPassword, PASSWORD_BCRYPT)
+                ]);
+
+                break;
+
+            case 'argon2i':
+                PublicAccount::where('email', $email)->update([
+                    'reset_token' => null,
+                    'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ])
+                ]);
+
+                break;
+
+            case 'argon2id':
+                PublicAccount::where('email', $email)->update([
+                    'reset_token' => null,
+                    'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ])
+                ]);
+
+                break;
+
+            default:
+                $this->data = [
+                    'title' => 'Password Hash Method is Not Defined',
+                    'subtitle' => 'HTTP Status Code: 400'
+                ];
+
+                return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        if($hashMethod === 'argon2i') {
-            PublicAccount::where('email', $email)->update([
-                'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ])
-            ]);
-        }
-
-        if($hashMethod === 'argon2id') {
-            PublicAccount::where('email', $email)->update([
-                'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ])
-            ]);
-        }
-
-        // Update database
-        PublicAccount::where('email', $email)->update([
-            'reset_token' => null
-        ]);
-
-        // Return response
+        // Redirect to /account/login route
         return $response->withRedirect('/account/login');
     }
 
     /**
-     * Update account details
+     * Update defails functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -458,8 +524,12 @@ class PublicAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -472,30 +542,38 @@ class PublicAccounts extends CommonBase
         $checkId = PublicAccount::where('email', $email)->value('id');
 
         if($checkId !== null && $id !== $checkId) {
-            $this->data['error'] = "That Email is Already Taken";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'That Email is Already Taken',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Check if current password is invalid
         $checkCurrentPassword = PublicAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
-            $this->data['error'] = "Current Password is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Current Password is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Update username and email columns in public accounts table
         PublicAccount::where('id', $id)->update([
             'username' => $username,
             'email' => $email
         ]);
 
-        // Return response
+        // Redirect to /account route
         return $response->withRedirect('/account');
     }
 
     /**
-     * Change account password
+     * Change password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -518,8 +596,12 @@ class PublicAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -531,45 +613,63 @@ class PublicAccounts extends CommonBase
         $checkCurrentPassword = PublicAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
-            $this->data['error'] = "Current Password is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Current Password is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Get password hash method
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
-        if($hashMethod === 'bcrypt') {
-            PublicAccount::where('id', $id)->update([
-                'password' => password_hash($newPassword, PASSWORD_BCRYPT)
-            ]);
+        // Update password column in public accounts table
+        switch($hashMethod) {
+            case 'bcrypt':
+                PublicAccount::where('id', $id)->update([
+                    'password' => password_hash($newPassword, PASSWORD_BCRYPT)
+                ]);
+
+                break;
+
+            case 'argon2i':
+                PublicAccount::where('id', $id)->update([
+                    'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ])
+                ]);
+
+                break;
+
+            case 'argon2id':
+                PublicAccount::where('id', $id)->update([
+                    'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ])
+                ]);
+
+                break;
+
+            default:
+                $this->data = [
+                    'title' => 'Password Hash Method is Not Defined',
+                    'subtitle' => 'HTTP Status Code: 400'
+                ];
+
+                return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        if($hashMethod === 'argon2i') {
-            PublicAccount::where('id', $id)->update([
-                'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ])
-            ]);
-        }
-
-        if($hashMethod === 'argon2id') {
-            PublicAccount::where('id', $id)->update([
-                'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ])
-            ]);
-        }
-
-        // Return response
+        // Redirect to /account route
         return $response->withRedirect('/account');
     }
 
     /**
-     * Delete your account
+     * Delete functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -590,8 +690,12 @@ class PublicAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -602,23 +706,16 @@ class PublicAccounts extends CommonBase
         $checkCurrentPassword = PublicAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
-            $this->data['error'] = "Current Password is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Current Password is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Delete current account row in public accounts table
         PublicAccount::where('id', $id)->delete();
-
-        // Remove authentication cookie
-        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_public_auth_token";
-        $cookieValue = "delete";
-        $cookieExpires = strtotime('now') - 1;
-        $cookiePath = "/";
-
-        setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
-
-        // Remove authentication session
-        unset($_SESSION['public']);
 
         // Return response
         return $response->withRedirect('/');

@@ -19,7 +19,7 @@ class PublicPages extends CommonBase
      */
     public function home(Request $request, Response $response, array $data)
     {
-        // Return response
+        // Return homepage
         return $this->view($response, 'home.twig');
     }
 
@@ -39,7 +39,7 @@ class PublicPages extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
-        // Return response
+        // Return account page
         return $this->view($response, 'account.twig');
     }
 }

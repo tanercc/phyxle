@@ -4,9 +4,10 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-// Check if app errors is enabled
+// Get app errors
 $errors = $container->get('settings')['app']['errors'];
 
+// Check if app errors is enabled
 if($errors) {
     // Add custom error page HTTP status code 404
     $container['notFoundHandler'] = function(Container $container) {

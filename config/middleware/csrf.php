@@ -15,7 +15,7 @@ $container['csrf'] = function(Container $container) {
 
     // Add custom error page for HTTP status code 400
     $csrf->setFailureCallable(function(Request $request, Response $response, callable $next) use($container) {
-        // Get Twig object from container
+        // Get view object from container
         $view = $container->get('view');
 
         // Return custom error page with response

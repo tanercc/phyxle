@@ -21,13 +21,13 @@ require_once __DIR__ . "/config/app.php";
 // Create dependency container
 $container = new Container($settings);
 
-// Load middleware to containers. Add new middleware bottom of this list.
+// Load middleware containers. Add new middleware bottom of this list.
 require_once __DIR__ . "/config/middleware/session.php";
 require_once __DIR__ . "/config/middleware/csrf.php";
 require_once __DIR__ . "/config/middleware/admin-auth.php";
 require_once __DIR__ . "/config/middleware/public-auth.php";
 
-// Load packages to containers. Add new packages bottom of this list.
+// Load packages containers. Add new packages bottom of this list.
 require_once __DIR__ . "/config/view.php";
 require_once __DIR__ . "/config/filesystem.php";
 require_once __DIR__ . "/config/database.php";

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 13, 2019 at 10:25 PM
+-- Generation Time: Mar 15, 2019 at 09:19 PM
 -- Server version: 10.3.13-MariaDB
 -- PHP Version: 7.3.3
 
@@ -69,7 +69,7 @@ CREATE TABLE `public_accounts` (
   `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `activation_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `logged_count` int(11) NOT NULL DEFAULT 0,

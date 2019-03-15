@@ -34,16 +34,9 @@ class Filters extends Twig_Extension
     {
         // Return filters
         return [
-            // Asset filter
             new Twig_Filter('asset', [$this, 'asset']),
-
-            // Media filter
             new Twig_Filter('media', [$this, 'media']),
-
-            // Thumbnail filter
             new Twig_Filter('thumbnail', [$this, 'thumbnail']),
-
-            // URL filter
             new Twig_Filter('link', [$this, 'link'])
         ];
     }
@@ -75,7 +68,7 @@ class Filters extends Twig_Extension
     }
 
     /**
-     * Media filter to get uploaded media in Twig templates
+     * Media filter to get uploaded medium in Twig templates
      *
      * @param string $file Medium name
      *
@@ -101,7 +94,7 @@ class Filters extends Twig_Extension
     }
 
     /**
-     * Thumbnail filter to get thumbnail of uploaded media in Twig templates
+     * Thumbnail filter to get thumbnail of uploaded medium in Twig templates
      *
      * @param string $file Thumbnail name
      *
@@ -127,15 +120,15 @@ class Filters extends Twig_Extension
     }
 
     /**
-     * Link filter to define internal URLs in Twig templates
+     * Link filter to define internal routes in Twig templates
      *
-     * @param string $path URL path
+     * @param string $route Route path
      *
      * @return string
      */
-    public function link(string $path)
+    public function link(string $route)
     {
-        // Return URL
-        return $this->container->get('settings')['app']['url'] . $path;
+        // Return route URL
+        return $this->container->get('settings')['app']['url'] . $route;
     }
 }

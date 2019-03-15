@@ -139,19 +139,19 @@ $settings = [
         // Validator array
         'validator' => [
             // Required error message
-            'required' => 'You Cannot Leave Any Empty Field',
+            'required' => 'Cannot Leave Empty Fields',
 
             // Minimum characters error message
-            'min' => 'There is a Minimum Character Limit',
+            'min' => 'Passwords Should Be Minimum 6 Characters',
 
             // Maximum characters error message
-            'max' => 'There is a Maximum Character Limit',
+            'max' => 'Passwords Should Be Maximum 32 Characters',
 
             // Email error message
             'email' => 'Email is Invalid',
 
             // Comparison error message
-            'same' => 'Password Fields are Do Not Match'
+            'same' => 'Check Confirm Password'
         ],
 
         // Image array

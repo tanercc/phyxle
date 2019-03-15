@@ -33,7 +33,6 @@ class Functions extends Twig_Extension
     {
         // Return functions
         return [
-            // Getenv function
             new Twig_Function('getenv', [$this, 'getenv'])
         ];
     }

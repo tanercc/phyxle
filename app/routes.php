@@ -6,24 +6,6 @@ use App\Controller\Admin\AdminPages;
 use App\Controller\PublicAccounts;
 use App\Controller\PublicPages;
 
-// Public routes
-$app->get('/', PublicPages::class . ':home');
-$app->get('/account', PublicPages::class . ':account');
-$app->get('/account/login', PublicAccounts::class . ':login');
-$app->post('/account/login', PublicAccounts::class . ':login');
-$app->get('/account/register', PublicAccounts::class . ':register');
-$app->post('/account/register', PublicAccounts::class . ':register');
-$app->get('/account/activate', PublicAccounts::class . ':activate');
-$app->get('/account/logout', PublicAccounts::class . ':logout');
-$app->post('/account/logout', PublicAccounts::class . ':logout');
-$app->get('/account/forgot-password', PublicAccounts::class . ':forgotPassword');
-$app->post('/account/forgot-password', PublicAccounts::class . ':forgotPassword');
-$app->get('/account/reset-password', PublicAccounts::class . ':resetPassword');
-$app->post('/account/reset-password', PublicAccounts::class . ':resetPassword');
-$app->post('/account/update-details', PublicAccounts::class . ':updateDetails');
-$app->post('/account/change-password', PublicAccounts::class . ':changePassword');
-$app->post('/account/delete', PublicAccounts::class . ':delete');
-
 // Admin routes
 $app->get('/admin', AdminPages::class . ':home');
 $app->get('/admin/account', AdminPages::class . ':account');
@@ -46,3 +28,21 @@ $app->get('/admin/media', AdminPages::class . ':media');
 $app->post('/admin/media/upload', AdminMedia::class . ':upload');
 $app->post('/admin/media/rename', AdminMedia::class . ':rename');
 $app->post('/admin/media/delete', AdminMedia::class . ':delete');
+
+// Public routes
+$app->get('/', PublicPages::class . ':home');
+$app->get('/account', PublicPages::class . ':account');
+$app->get('/account/login', PublicAccounts::class . ':login');
+$app->post('/account/login', PublicAccounts::class . ':login');
+$app->get('/account/register', PublicAccounts::class . ':register');
+$app->post('/account/register', PublicAccounts::class . ':register');
+$app->get('/account/activate', PublicAccounts::class . ':activate');
+$app->get('/account/logout', PublicAccounts::class . ':logout');
+$app->post('/account/logout', PublicAccounts::class . ':logout');
+$app->get('/account/forgot-password', PublicAccounts::class . ':forgotPassword');
+$app->post('/account/forgot-password', PublicAccounts::class . ':forgotPassword');
+$app->get('/account/reset-password', PublicAccounts::class . ':resetPassword');
+$app->post('/account/reset-password', PublicAccounts::class . ':resetPassword');
+$app->post('/account/update-details', PublicAccounts::class . ':updateDetails');
+$app->post('/account/change-password', PublicAccounts::class . ':changePassword');
+$app->post('/account/delete', PublicAccounts::class . ':delete');

@@ -11,8 +11,11 @@ class CommonBase
     // Get contained packages from containers
     protected $container;
 
-    // Pass data to Twig templates
-    protected $data = [];
+    // Pass Carbon package to child controllers
+    protected $time;
+
+    // Pass Filesystem package to child controllers
+    protected $filesystem;
 
     // Check authenticated as admin or not
     protected $admin;
@@ -20,29 +23,18 @@ class CommonBase
     // Check authenticated as public or not
     protected $public;
 
-    // Pass Carbon package to child controllers
-    protected $time;
-
-    // Pass Filesystem package to child controllers
-    protected $filesystem;
+    // Pass data to Twig templates
+    protected $data = [];
 
     /**
      * Base controller constructor
      *
      * @param Container $container PSR-11 container object
-     *
-     * @return void
      */
     public function __construct(Container $container)
     {
         // Get dependency container
         $this->container = $container;
-
-        // Get if authenticated as admin or not
-        $this->admin = (isset($_SESSION['admin']) ? true : false);
-
-        // Get if authenticated as public or not
-        $this->public = (isset($_SESSION['public']) ? true : false);
 
         // Get Carbon object from container
         $this->time = $container->get('time');
@@ -50,7 +42,13 @@ class CommonBase
         // Get Filesystem object from container
         $this->filesystem = $container->get('filesystem');
 
-        // Set Eloquent ORM to run on every request
+        // Get if authenticated as admin or not
+        $this->admin = (isset($_SESSION['admin']) ? true : false);
+
+        // Get if authenticated as public or not
+        $this->public = (isset($_SESSION['public']) ? true : false);
+
+        // Set database to run on every request
         $container->get('database');
     }
 

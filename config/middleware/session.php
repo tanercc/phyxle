@@ -8,7 +8,7 @@ $container['session'] = function(Container $container) {
     // Get session middleware settings
     $settings = $container->get('settings')['middleware']['session'];
 
-    // Configure session middleware
+    // Create session middleware object
     $session = new Session([
         'lifetime' => $settings['lifetime'],
         'path' => $settings['path'],

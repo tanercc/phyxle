@@ -57,7 +57,7 @@ CREATE TABLE `public_accounts` (
     `unique_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `activation_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `reset_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-    `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `username` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
     `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `logged_count` int(11) NOT NULL DEFAULT 0,
@@ -69,7 +69,7 @@ CREATE TABLE `public_accounts` (
 ALTER TABLE `public_accounts`
     ADD PRIMARY KEY (`id`),
     ADD UNIQUE KEY `unique_id` (`unique_id`),
-    ADD UNIQUE KEY `email` (`email`);
+    ADD UNIQUE KEY `email` (`email`),
     ADD UNIQUE KEY `activation_token` (`activation_token`);
 
 ALTER TABLE `public_accounts`
@@ -84,7 +84,7 @@ CREATE TABLE `admin_media` (
     `size` int(11) NOT NULL,
     `created_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     `updated_at` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
 
 ALTER TABLE `admin_media`
     ADD PRIMARY KEY (`id`),
@@ -260,20 +260,38 @@ Here's all global variables available.
 {# Get current PHP version #}
 {{ app.php }}
 
-{# Check if authenticated #}
-{{ auth.check }}
+{# Check if authenticated as admin #}
+{{ auth.admin.check }}
 
-{# Get authenticated user's username #}
-{{ auth.username }}
+{# Check authenticated as admin user's ID #}
+{{ auth.admin.id }}
 
-{# Get authenticated user's email #}
-{{ auth.email }}
+{# Get authenticated admin user's username #}
+{{ auth.admin.username }}
 
-{# Get authenticated user's last login timestamp #}
-{{ auth.login.last }}
+{# Get authenticated admin user's email #}
+{{ auth.admin.email }}
 
-{# Get authenticated user's login count #}
-{{ auth.login.count }}
+{# Get authenticated admin user's last login timestamp #}
+{{ auth.admin.login.last }}
+
+{# Get authenticated admin user's login count #}
+{{ auth.admin.login.count }}
+
+{# Check if authenticated as public #}
+{{ auth.admin.check }}
+
+{# Get authenticated public user's username #}
+{{ auth.public.username }}
+
+{# Get authenticated public user's email #}
+{{ auth.public.email }}
+
+{# Get authenticated public user's last login timestamp #}
+{{ auth.public.login.last }}
+
+{# Get authenticated public user's login count #}
+{{ auth.public.login.count }}
 
 {# Get CSRF name key #}
 {{ csrf.name.key }}

@@ -10,7 +10,7 @@ use Slim\Http\Response;
 class AdminAccounts extends CommonBase
 {
     /**
-     * Do login functions
+     * Login functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -30,15 +30,19 @@ class AdminAccounts extends CommonBase
             return $this->view($response, 'admin/account_login.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'email' => 'required|email|max:191',
             'password' => 'required|min:6|max:32'
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -49,16 +53,24 @@ class AdminAccounts extends CommonBase
         $checkPassword = AdminAccount::where('email', $email)->value('password');
 
         if(!password_verify($password, $checkPassword)) {
-            $this->data['error'] = "Email or Password is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Email or Password is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Check if account is not activated
         $checkActivate = AdminAccount::where('email', $email)->value('activated');
 
         if($checkActivate === 0) {
-            $this->data['error'] = "Your Account is Deactivated";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Account is Deactivated',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Set authentication cookie
@@ -69,21 +81,23 @@ class AdminAccounts extends CommonBase
 
         setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
 
-        // Update database
+        // Get logged count
         $loggedCount = AdminAccount::where('email', $email)->value('logged_count') + 1;
 
+        // Update reset token, logged count and last logged at columns in admin
+        // accounts table
         AdminAccount::where('email', $email)->update([
             'reset_token' => null,
             'logged_count' => $loggedCount,
             'last_logged_at' => $this->time::now()
         ]);
 
-        // Return response
+        // Redirect to /admin route
         return $response->withRedirect('/admin');
     }
 
     /**
-     * Do register functions
+     * Register functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -103,7 +117,7 @@ class AdminAccounts extends CommonBase
             return $this->view($response, 'admin/account_register.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'username' => 'required|max:16',
             'email' => 'required|email|max:191',
@@ -113,8 +127,12 @@ class AdminAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -127,68 +145,91 @@ class AdminAccounts extends CommonBase
         $checkEmail = AdminAccount::where('email', $email)->first();
 
         if($checkEmail !== null) {
-            $this->data['error'] = "There is an Already Account Using That Email";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'There is an Account Already Using That Email',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Check if app key is invalid
         $checkAppKey = $this->container->get('settings')['app']['key'];
 
         if($checkAppKey !== $appKey) {
-            $this->data['error'] = "Your App Key is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'App Key is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Get password hash method
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
-        if($hashMethod === 'bcrypt') {
-            AdminAccount::insert([
-                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
-                'username' => $username,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_BCRYPT),
-                'created_at' => $this->time::now(),
-                'updated_at' => $this->time::now()
-            ]);
+        // Update unique ID, username, email, password, created at and updated
+        // at columns in admin accounts table
+        switch($hashMethod) {
+            case 'bcrypt':
+                AdminAccount::insert([
+                    'unique_id' => md5(bin2hex(random_bytes(32)) . $this->container->get('settings')['app']['key']),
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => password_hash($password, PASSWORD_BCRYPT),
+                    'created_at' => $this->time::now(),
+                    'updated_at' => $this->time::now()
+                ]);
+
+                break;
+
+            case 'argon2i':
+                AdminAccount::insert([
+                    'unique_id' => md5(bin2hex(random_bytes(32)) . $this->container->get('settings')['app']['key']),
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => password_hash($password, PASSWORD_ARGON2I, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ]),
+                    'created_at' => $this->time::now(),
+                    'updated_at' => $this->time::now()
+                ]);
+
+                break;
+
+            case 'argon2id':
+                AdminAccount::insert([
+                    'unique_id' => md5(bin2hex(random_bytes(32)) . $this->container->get('settings')['app']['key']),
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => password_hash($password, PASSWORD_ARGON2ID, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ]),
+                    'created_at' => $this->time::now(),
+                    'updated_at' => $this->time::now()
+                ]);
+
+                break;
+
+            default:
+                $this->data = [
+                    'title' => 'Password Hash Method is Not Defined',
+                    'subtitle' => 'HTTP Status Code: 400'
+                ];
+
+                return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        if($hashMethod === 'argon2i') {
-            AdminAccount::insert([
-                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
-                'username' => $username,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_ARGON2I, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ]),
-                'created_at' => $this->time::now(),
-                'updated_at' => $this->time::now()
-            ]);
-        }
-
-        if($hashMethod === 'argon2id') {
-            AdminAccount::insert([
-                'unique_id' => bin2hex(random_bytes(16)) . $this->container->get('settings')['app']['key'],
-                'username' => $username,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_ARGON2ID, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ]),
-                'created_at' => $this->time::now(),
-                'updated_at' => $this->time::now()
-            ]);
-        }
-
-        // Return response
+        // Redirect to /admin/account/login route
         return $response->withRedirect('/admin/account/login');
     }
 
     /**
-     * Do activate functions
+     * Activate functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -206,17 +247,17 @@ class AdminAccounts extends CommonBase
         // Get account ID
         $id = htmlspecialchars(trim($request->getParam('id')));
 
-        // Update database
+        // Update activated column in admin accounts table
         AdminAccount::where('id', $id)->update([
             'activated' => 1
         ]);
 
-        // Return response
+        // Redirect to /admin/account route
         return $response->withRedirect('/admin/account');
     }
 
     /**
-     * Do deactivate functions
+     * Deactivate functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -234,17 +275,17 @@ class AdminAccounts extends CommonBase
         // Get account ID
         $id = htmlspecialchars(trim($request->getParam('id')));
 
-        // Update database
+        // Update activated column in admin accounts table
         AdminAccount::where('id', $id)->update([
             'activated' => 0
         ]);
 
-        // Return response
+        // Redirect to /admin/account route
         return $response->withRedirect('/admin/account');
     }
 
     /**
-     * Do logout functions
+     * Logout functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -275,12 +316,12 @@ class AdminAccounts extends CommonBase
         // Remove authentication session
         unset($_SESSION['admin']);
 
-        // Return response
+        // Redirect to / route
         return $response->withRedirect('/');
     }
 
     /**
-     * Do forgot password functions
+     * Forgot password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -300,14 +341,18 @@ class AdminAccounts extends CommonBase
             return $this->view($response, 'admin/account_forgot_password.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'email' => 'required|email|max:191'
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -317,39 +362,42 @@ class AdminAccounts extends CommonBase
         $checkEmail = AdminAccount::where('email', $email)->first();
 
         if($checkEmail === null) {
-            $this->data['error'] = "There's No Account Using That Email";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'There is No Account Using That Email',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Get reset token
         $resetToken = bin2hex(random_bytes(32));
 
+        // Update reset token column in admin accounts table
         AdminAccount::where('email', $email)->update([
             'reset_token' => $resetToken
         ]);
 
         // Send password reset email
-        $appName = $this->container->get('settings')['app']['name'];
-        $appUrl = $this->container->get('settings')['app']['url'];
-        $appEmail = $this->container->get('settings')['app']['email'];
-
         $this->mail([
-            'subject' => ucfirst($appName) . ' - Reset Password',
-            'from' => $appEmail,
+            'subject' => ucfirst($this->container->get('settings')['app']['name']) . ' - Reset Password',
+            'from' => $this->container->get('settings')['app']['email'],
             'to' => $email,
             'body' => '<p>Someone has requested to reset your password. If this was a mistake, ignore this email.</p>' .
-            '<a href="' . $appUrl . '/admin/account/reset-password?token=' . $resetToken . '" target="_blank">Reset Password</a>'
+            '<a href="' . $this->container->get('settings')['app']['url'] . '/admin/account/reset-password?token=' . $resetToken . '" target="_blank">Reset Password</a>'
         ]);
 
-        // Return response
-        $this->data['title'] = "Check Your Email";
-        $this->data['subtitle'] = "Password Reset Email Has Been Sent";
+        // Return message page
+        $this->data = [
+            'title' => 'Check Your Email',
+            'subtitle' => 'Password Reset Mail Has Been Sent'
+        ];
 
         return $this->view($response, 'common/templates/message.twig');
     }
 
     /**
-     * Do reset password functions
+     * Reset password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -366,14 +414,12 @@ class AdminAccounts extends CommonBase
 
         // Check if request method is GET
         if($request->isGet()) {
-            // Get token
             $this->data['token'] = $request->getQueryParam('token');
 
-            // Return response
             return $this->view($response, 'admin/account_reset_password.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'email' => 'required|email|max:191',
             'new-password' => 'required|min:6|max:32',
@@ -381,8 +427,12 @@ class AdminAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -398,50 +448,66 @@ class AdminAccounts extends CommonBase
                 'reset_token' => null
             ]);
 
-            $this->data['error'] = "Your Reset Token is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Reset Token is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Reset password
+        // Get password hash method
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
-        if($hashMethod === 'bcrypt') {
-            AdminAccount::where('email', $email)->update([
-                'password' => password_hash($newPassword, PASSWORD_BCRYPT)
-            ]);
+        // Update reset token and password columns in admin accounts table
+        switch($hashMethod) {
+            case 'bcrypt':
+                AdminAccount::where('email', $email)->update([
+                    'reset_token' => null,
+                    'password' => password_hash($newPassword, PASSWORD_BCRYPT)
+                ]);
+
+                break;
+
+            case 'argon2i':
+                AdminAccount::where('email', $email)->update([
+                    'reset_token' => null,
+                    'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ])
+                ]);
+
+                break;
+
+            case 'argon2id':
+                AdminAccount::where('email', $email)->update([
+                    'reset_token' => null,
+                    'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ])
+                ]);
+
+                break;
+
+            default:
+                $this->data = [
+                    'title' => 'Password Hash Method is Not Defined',
+                    'subtitle' => 'HTTP Status Code: 400'
+                ];
+
+                return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        if($hashMethod === 'argon2i') {
-            AdminAccount::where('email', $email)->update([
-                'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ])
-            ]);
-        }
-
-        if($hashMethod === 'argon2id') {
-            AdminAccount::where('email', $email)->update([
-                'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ])
-            ]);
-        }
-
-        // Update database
-        AdminAccount::where('email', $email)->update([
-            'reset_token' => null
-        ]);
-
-        // Return response
+        // Redirect to /admin/account/login route
         return $response->withRedirect('/admin/account/login');
     }
 
     /**
-     * Update account details
+     * Update details function
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -456,7 +522,7 @@ class AdminAccounts extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'username' => 'required|max:16',
             'email' => 'required|email|max:191',
@@ -464,8 +530,12 @@ class AdminAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -478,30 +548,38 @@ class AdminAccounts extends CommonBase
         $checkId = AdminAccount::where('email', $email)->value('id');
 
         if($checkId !== null && $id !== $checkId) {
-            $this->data['error'] = "That Email is Already Taken";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'That Email is Already Taken',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Check if current password is invalid
         $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
-            $this->data['error'] = "Current Password is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Current Password is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Update username and emails columns in admin accounts table
         AdminAccount::where('id', $id)->update([
             'username' => $username,
             'email' => $email
         ]);
 
-        // Return response
+        // Redirect to /admin/account route
         return $response->withRedirect('/admin/account');
     }
 
     /**
-     * Change account password
+     * Change password functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -516,7 +594,7 @@ class AdminAccounts extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'current-password' => 'required|min:6|max:32',
             'new-password' => 'required|min:6|max:32',
@@ -524,8 +602,12 @@ class AdminAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -537,45 +619,63 @@ class AdminAccounts extends CommonBase
         $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
-            $this->data['error'] = "Current Password is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Current Password is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Get password hash method
         $hashMethod = $this->container->get('settings')['app']['hash'];
 
-        if($hashMethod === 'bcrypt') {
-            AdminAccount::where('id', $id)->update([
-                'password' => password_hash($newPassword, PASSWORD_BCRYPT)
-            ]);
+        // Update password column in admin accounts table
+        switch($hashMethod) {
+            case 'bcrypt':
+                AdminAccount::where('id', $id)->update([
+                    'password' => password_hash($newPassword, PASSWORD_BCRYPT)
+                ]);
+
+                break;
+
+            case 'argon2i':
+                AdminAccount::where('id', $id)->update([
+                    'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ])
+                ]);
+
+                break;
+
+            case 'argon2id':
+                AdminAccount::where('id', $id)->update([
+                    'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
+                        'memory_cost' => 2048,
+                        'time_cost' => 4,
+                        'threads' => 2
+                    ])
+                ]);
+
+                break;
+
+            default:
+                $this->data = [
+                    'title' => 'Password Hash Method is Not Defined',
+                    'subtitle' => 'HTTP Status Code: 400'
+                ];
+
+                return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        if($hashMethod === 'argon2i') {
-            AdminAccount::where('id', $id)->update([
-                'password' => password_hash($newPassword, PASSWORD_ARGON2I, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ])
-            ]);
-        }
-
-        if($hashMethod === 'argon2id') {
-            AdminAccount::where('id', $id)->update([
-                'password' => password_hash($newPassword, PASSWORD_ARGON2ID, [
-                    'memory_cost' => 2048,
-                    'time_cost' => 4,
-                    'threads' => 2
-                ])
-            ]);
-        }
-
-        // Return response
+        // Redirect to /admin/account route
         return $response->withRedirect('/admin/account');
     }
 
     /**
-     * Delete your account
+     * Delete functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -585,8 +685,8 @@ class AdminAccounts extends CommonBase
      */
     public function delete(Request $request, Response $response, array $data)
     {
-        // Check if not authenticated
-        if(!$this->admin) {
+        // Check if not authenticated or authenticated as super user
+        if(!$this->admin || $this->admin('id') === 1) {
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
@@ -596,8 +696,12 @@ class AdminAccounts extends CommonBase
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -608,25 +712,18 @@ class AdminAccounts extends CommonBase
         $checkCurrentPassword = AdminAccount::where('id', $id)->value('password');
 
         if(!password_verify($currentPassword, $checkCurrentPassword)) {
-            $this->data['error'] = "Current Password is Invalid";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'Current Password is Invalid',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
-        // Update database
+        // Delete current account row in admin accounts table
         AdminAccount::where('id', $id)->delete();
 
-        // Remove authentication cookie
-        $cookieName = str_replace(' ', '_', strtolower($this->container->get('settings')['app']['name'])) . "_admin_auth_token";
-        $cookieValue = "delete";
-        $cookieExpires = strtotime('now') - 1;
-        $cookiePath = "/";
-
-        setcookie($cookieName, $cookieValue, $cookieExpires, $cookiePath);
-
-        // Remove authentication session
-        unset($_SESSION['admin']);
-
-        // Return response
+        // Redirect to / route
         return $response->withRedirect('/');
     }
 }

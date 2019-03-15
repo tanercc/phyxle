@@ -11,7 +11,7 @@ use Slim\Http\Response;
 class AdminMedia extends CommonBase
 {
     /**
-     * Upload media
+     * Upload functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -29,9 +29,9 @@ class AdminMedia extends CommonBase
         // Get input values
         $media = $request->getUploadedFiles();
 
-        // Loop through uploaded media
+        // Upload media
         foreach($media['media'] as $medium) {
-            // Check for uploading errors
+            // Check if there are any errors when uploading
             if($medium->getError() !== UPLOAD_ERR_OK) {
                 continue;
             }
@@ -58,13 +58,14 @@ class AdminMedia extends CommonBase
             $height = $this->image($original)->height();
             $size = $this->image($original)->filesize() / 1024;
 
-            // Resize and save medium thumbnail
+            // Resize and move medium to thumbnail path
             if($width > $height) {
                 if($width > 500) {
                     $this->image($original)->resize(500, null, function(Constraint $constraint) {
                         $constraint->aspectRatio();
                     })->save($thumbnail);
                 }
+
                 if($width <= 500) {
                     $this->image($original)->save($thumbnail);
                 }
@@ -76,6 +77,7 @@ class AdminMedia extends CommonBase
                         $constraint->aspectRatio();
                     })->save($thumbnail);
                 }
+
                 if($height <= 500) {
                     $this->image($original)->save($thumbnail);
                 }
@@ -85,12 +87,14 @@ class AdminMedia extends CommonBase
                 if($width > 500) {
                     $this->image($original)->resize(500, 500)->save($thumbnail);
                 }
+
                 if($width <= 500) {
                     $this->image($original)->save($thumbnail);
                 }
             }
 
-            // Update database
+            // Update name, width, height, size, created at and updated at
+            // columns in admin media table
             AdminMedium::insert([
                 'name' => $name,
                 'width' => $width,
@@ -100,13 +104,13 @@ class AdminMedia extends CommonBase
                 'updated_at' => $this->time::now()
             ]);
 
-            // Return response
+            // Redirect to /admin/media route
             return $response->withRedirect('/admin/media');
         }
     }
 
     /**
-     * Rename uploaded media
+     * Rename functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -121,15 +125,19 @@ class AdminMedia extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'id' => 'required',
             'name' => 'required|max:191'
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -140,8 +148,12 @@ class AdminMedia extends CommonBase
         $checkName = AdminMedium::where('name', $name)->first();
 
         if($checkName !== null) {
-            $this->data['error'] = "Cannot Use That Name";
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => 'There is a Medium Already Using That Name',
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get old and new paths for media
@@ -154,17 +166,17 @@ class AdminMedia extends CommonBase
         $this->filesystem->rename($originalOld, $originalNew);
         $this->filesystem->rename($thumbnailOld, $thumbnailNew);
 
-        // Update database
+        // Update name column in admin media table
         AdminMedium::where('id', $id)->update([
             'name' => $name
         ]);
 
-        // Return response
+        // Redirect to /admin/media route
         return $response->withRedirect('/admin/media');
     }
 
     /**
-     * Delete uploaded media
+     * Delete functions
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
@@ -179,14 +191,18 @@ class AdminMedia extends CommonBase
             return $this->view($response->withStatus(403), 'common/errors/403.twig');
         }
 
-        // Check if input validation is failed
+        // Check if input validations are failed
         $validation = $this->validator($request, [
             'id' => 'required'
         ]);
 
         if($validation !== null) {
-            $this->data['error'] = reset($validation);
-            return $this->view($response->withStatus(400), 'common/templates/validation.twig');
+            $this->data = [
+                'title' => reset($validation),
+                'subtitle' => 'HTTP Status Code: 400'
+            ];
+
+            return $this->view($response->withStatus(400), 'common/templates/message.twig');
         }
 
         // Get input values
@@ -200,10 +216,10 @@ class AdminMedia extends CommonBase
         $this->filesystem->remove($original);
         $this->filesystem->remove($thumbnail);
 
-        // Update database
+        // Delete current medium row in admin media table
         AdminMedium::where('id', $id)->delete();
 
-        // Return response
+        // Redirect to /admin/media table
         return $response->withRedirect('/admin/media');
     }
 }

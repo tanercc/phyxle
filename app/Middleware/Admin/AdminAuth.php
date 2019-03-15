@@ -12,7 +12,7 @@ class AdminAuth
     private $container;
 
     /**
-     * AdminAuth middleware constructor
+     * Admin auth middleware constructor
      *
      * @param Container $container PSR-11 container object
      *
@@ -25,7 +25,7 @@ class AdminAuth
     }
 
     /**
-     * AdminAuth middleware invoker
+     * Admin auth middleware invoker
      *
      * @param Request  $request  PSR-7 request object
      * @param Response $response PSR-7 response object
